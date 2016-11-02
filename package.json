@@ -1,0 +1,16 @@
+{
+  "name": "hdm-client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/jscheffner/hdm-node-client.git"
+  },
+  "author": "Jonas Scheffner",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/jscheffner/hdm-node-client#readme"
+}
