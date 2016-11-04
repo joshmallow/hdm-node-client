@@ -16,5 +16,10 @@
   "dependencies": {
     "request": "^2.77.0",
     "url-join": "^1.1.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "rewire": "^2.5.2",
+    "sinon": "^1.17.6"
   }
 }
