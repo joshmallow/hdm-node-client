@@ -89,7 +89,6 @@ describe('search', function () {
             done();
         })
     })
-
 });
 
 function spySearchRequest (type, query, path, done) {
