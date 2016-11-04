@@ -10,7 +10,7 @@ var sandbox = sinon.sandbox.create();
 
 describe('search', function () {
 
-    beforeEach(function () {
+    afterEach(function () {
         sandbox.restore();
     });
 
