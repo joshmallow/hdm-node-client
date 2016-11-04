@@ -47,6 +47,47 @@ describe('search', function () {
     it('should make correct call to search event ', function (done) {
         var path = 'https://hdmapp.mi.hdm-stuttgart.de/search/anonymous/events?q=Party';
         spySearchRequest('event', 'Party', path, done);
+    });
+
+    it('should call cb with the api response as is', function (done) {
+        var testdata, client;
+        testdata = 'test data';
+        sandbox.stub(Client.__get__('request'), 'get').callsArgWith(1, null, null, testdata);
+        client = new Client();
+        client.search('person', 'Pohl', function (err, data) {
+            expect(data).to.equal(testdata);
+            done(err, data);
+        })
+    });
+
+    it('should call cb with the error message if api replies with an error', function (done) {
+        var client;
+        sandbox.stub(Client.__get__('request'), 'get').callsArgWith(1, 'Test Error', null, null);
+        client = new Client();
+        client.search('person', 'Pohl', function (err) {
+            expect(err).to.equal('Test Error');
+            done();
+        })
+    });
+
+    it('should not make request if type is invalid', function (done) {
+        var client, spy, called;
+
+        spy = sandbox.spy(Client.__get__('request'), 'get');
+        client = new Client();
+        client.search('food', 'Pohl', function () {
+            called = spy.called;
+            expect(called).to.be.false;
+            done();
+        })
+    });
+
+    it('should provide error message if type is invalid', function (done) {
+        var client = new Client();
+        client.search('food', 'Pohl', function (err) {
+            expect(err.message).to.equal('Type food is invalid.');
+            done();
+        })
     })
 
 });
