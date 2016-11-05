@@ -2,7 +2,7 @@
   "name": "hdm-client",
   "version": "1.0.0",
   "description": "",
-  "main": "lib/client.js",
+  "main": "index.js",
   "scripts": {
     "test": "mocha"
   },
