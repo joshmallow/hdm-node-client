@@ -38,8 +38,11 @@ Client.prototype.details = function (type, id, done) {
 
 };
 
-Client.prototype.menu = function () {
-
+Client.prototype.menu = function (done) {
+    var path = urljoin(this.url, 'menu');
+    request.get(path, function (err, response, body) {
+        done(err, body);
+    });
 };
 
 module.exports = Client;
