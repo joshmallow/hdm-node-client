@@ -38,4 +38,8 @@ Client.prototype.details = function (type, id, done) {
 
 };
 
+Client.prototype.menu = function () {
+
+};
+
 module.exports = Client;
