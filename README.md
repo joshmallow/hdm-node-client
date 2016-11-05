@@ -12,4 +12,4 @@ The client currently does not support authentication. That means for example tha
 
 ### Running Tests ###
 
-To run the tests, you can use **npm test**. In this case there is no need to install mocha globally.
+To run the tests, you can use `npm test`. In this case there is no need to install mocha globally.
