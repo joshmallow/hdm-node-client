@@ -45,4 +45,8 @@ Client.prototype.menu = function (done) {
     });
 };
 
+Client.prototype.searchDetails = function () {
+
+};
+
 module.exports = Client;
