@@ -4,7 +4,8 @@
   "description": "Client for the Stuttgart Media University API",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "xunit-test": "mocha --recursive -R xunit test/ > test-reports.xml"
   },
   "repository": {
     "type": "git",
