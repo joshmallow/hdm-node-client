@@ -48,13 +48,17 @@ Client.prototype.menu = function (done) {
 Client.prototype.searchDetails = function (type, query, done) {
     var res = [];
     this.search(type, query, function (err, results) {
+        if (err) {
+            done(err);
+            return;
+        }
         async.each(results, function (result, callback) {
             this.details(result.type, result.id, function (err, det) {
                 res.push(det);
-                callback();
+                callback(err);
             });
-        }.bind(this), function () {
-            done();
+        }.bind(this), function (err) {
+            done(err);
         })
     }.bind(this));
 };
