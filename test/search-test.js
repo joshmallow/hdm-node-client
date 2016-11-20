@@ -47,15 +47,16 @@ describe('search', function () {
         spySearchRequest('event', 'Party', path, done);
     });
 
-    it('should call cb with the api response as is', function (done) {
+    it('should call cb with the parsed api response', function (done) {
         var client = new Client();
         nock('https://hdmapp.mi.hdm-stuttgart.de')
             .get('/search/anonymous/persons')
             .query({ q : 'Pohl' })
-            .reply(200, 'Test Response');
+            .reply(200, {'Test' : 'Response'});
 
         client.search('person', 'Pohl', function (err, data) {
-            expect(data).to.equal('Test Response');
+            expect(data).to.be.an('object');
+            expect(data).to.eql({'Test' : 'Response'});
             done(err, data);
         })
     });
@@ -104,7 +105,7 @@ function spySearchRequest (type, query, path, done) {
     scope = nock('https://hdmapp.mi.hdm-stuttgart.de')
         .get(path)
         .query({q: query})
-        .reply(200, 'Test');
+        .reply(200, {'Test' : 'Response'});
 
     client = new Client();
     client.search(type, query, function () {

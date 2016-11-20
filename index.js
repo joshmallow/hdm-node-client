@@ -17,7 +17,11 @@ Client.prototype.search = function (type, query, done) {
     if (paths.hasOwnProperty(type)) {
         q = encodeURIComponent(query);
         request.get(paths[type] + '?q=' + q, function (err, response, body) {
-            done(err, body);
+            if (err) {
+                done(err);
+                return;
+            }
+            done(null, JSON.parse(body));
         })
     } else {
         error = new Error('Type ' + type + ' is invalid.');
