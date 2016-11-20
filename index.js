@@ -1,6 +1,6 @@
 var request = require('request');
 var urljoin = require('url-join');
-
+var async   = require('async');
 var Client = function (url) {
     this.url = !!url ? url : 'https://hdmapp.mi.hdm-stuttgart.de';
 };
@@ -8,11 +8,11 @@ var Client = function (url) {
 Client.prototype.search = function (type, query, done) {
     var q, paths, error;
     paths = {
-        person : urljoin(this.url, 'search', 'anonymous', 'persons'),
-        lecture: urljoin(this.url, 'search', 'anonymous', 'lectures'),
-        all    : urljoin(this.url, 'search', 'anonymous', 'all'),
-        room   : urljoin(this.url, 'search', 'anonymous', 'rooms'),
-        event  : urljoin(this.url, 'search', 'anonymous', 'events')
+        person  : urljoin(this.url, 'search', 'anonymous', 'persons'),
+        lecture : urljoin(this.url, 'search', 'anonymous', 'lectures'),
+        all     : urljoin(this.url, 'search', 'anonymous', 'all'),
+        room    : urljoin(this.url, 'search', 'anonymous', 'rooms'),
+        event   : urljoin(this.url, 'search', 'anonymous', 'events')
     };
     if (paths.hasOwnProperty(type)) {
         q = encodeURIComponent(query);
@@ -45,8 +45,18 @@ Client.prototype.menu = function (done) {
     });
 };
 
-Client.prototype.searchDetails = function () {
-
+Client.prototype.searchDetails = function (type, query, done) {
+    var res = [];
+    this.search(type, query, function (err, results) {
+        async.each(results, function (result, callback) {
+            this.details(result.type, result.id, function (err, det) {
+                res.push(det);
+                callback();
+            });
+        }.bind(this), function () {
+            done();
+        })
+    }.bind(this));
 };
 
 module.exports = Client;

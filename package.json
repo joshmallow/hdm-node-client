@@ -15,6 +15,7 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/jscheffner/hdm-node-client#readme",
   "dependencies": {
+    "async": "^2.1.2",
     "request": "^2.77.0",
     "url-join": "^1.1.0"
   },
