@@ -2,7 +2,7 @@ var request = require('request');
 var urljoin = require('url-join');
 var async   = require('async');
 var Client = function (url) {
-    this.url = !!url ? url : 'https://hdmapp.mi.hdm-stuttgart.de';
+    this.url = url ? url : 'https://hdmapp.mi.hdm-stuttgart.de';
 };
 
 Client.prototype.search = function (type, query, done) {
