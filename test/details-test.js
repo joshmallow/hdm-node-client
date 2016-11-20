@@ -79,14 +79,15 @@ describe('details', function () {
         })
     });
 
-    it('should provide response body of api call', function (done) {
+    it('should provide response body of api call as object', function (done) {
         var client = new Client();
         nock('https://hdmapp.mi.hdm-stuttgart.de')
             .get('/details/anonymous/person/123')
-            .reply(200, 'Test Response');
+            .reply(200, {'Test' : 'Response'});
 
         client.details('person', '123', function (err, data) {
-            expect(data).to.equal('Test Response');
+            expect(data).to.be.an('object');
+            expect(data).to.eql({'Test' : 'Response'});
             done(err, data);
         })
     })
@@ -97,7 +98,7 @@ function spyDetailsRequest(type, id, path ,done) {
 
     scope = nock('https://hdmapp.mi.hdm-stuttgart.de')
         .get(path)
-        .reply(200, 'Test');
+        .reply(200, {Test : 'response'});
 
     client = new Client();
     client.details(type, id, function () {

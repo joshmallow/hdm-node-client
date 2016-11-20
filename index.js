@@ -34,7 +34,11 @@ Client.prototype.details = function (type, id, done) {
     var path = urljoin(this.url, 'details', 'anonymous', type, id);
     if (validTypes.indexOf(type) >= 0){
         request.get(path, function (err, response, body) {
-            done(err, body);
+            if (err) {
+                done(err);
+                return;
+            }
+            done(null, JSON.parse(body));
         })
     } else {
         done(new Error('Type ' + type + ' is invalid.'));
