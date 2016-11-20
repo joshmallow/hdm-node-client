@@ -42,27 +42,24 @@ describe('searchDetails', function () {
     });
 
     it('should call done with error if #search throws one', function(done) {
-        var client, error;
-        error = new Error('Test');
-        client = new Client();
+        var client = new Client();
         client.details = sandbox.spy();
-        client.search = sandbox.stub().callsArgWith(2, error, null);
+        client.search = sandbox.stub().callsArgWith(2, 'Test Error', null);
 
         client.searchDetails('person', 'thomas', function (err) {
-            expect(err).to.equal(error);
+            expect(err).to.equal('Test Error');
             done();
         })
     });
 
     it('should call done with error if #details throws one', function(done) {
-        var client, error;
+        var client;
         client = new Client();
-        error = new Error('Test');
         sandbox.stub(client,'search').callsArgWith(2, null, searchDetails);
-        sandbox.stub(client, 'details').callsArgWith(2, error);
+        sandbox.stub(client, 'details').callsArgWith(2, 'Test Error', null);
 
         client.searchDetails('person', 'thomas', function (err) {
-            expect(err).to.equal(error);
+            expect(err).to.equal('Test Error');
             done();
         })
     });
