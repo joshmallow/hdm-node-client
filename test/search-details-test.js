@@ -43,7 +43,6 @@ describe('searchDetails', function () {
 
     it('should call done with error if #search throws one', function(done) {
         var client = new Client();
-        client.details = sandbox.spy();
         client.search = sandbox.stub().callsArgWith(2, 'Test Error', null);
 
         client.searchDetails('person', 'thomas', function (err) {
