@@ -1,6 +1,7 @@
 var request = require('request');
 var urljoin = require('url-join');
 var async   = require('async');
+
 var Client = function (url) {
     this.url = url ? url : 'https://hdmapp.mi.hdm-stuttgart.de';
 };
@@ -49,7 +50,11 @@ Client.prototype.details = function (type, id, done) {
 Client.prototype.menu = function (done) {
     var path = urljoin(this.url, 'menu');
     request.get(path, function (err, response, body) {
-        done(err, body);
+        if (err) {
+            done(err);
+            return
+        }
+        done(null, JSON.parse(body));
     });
 };
 

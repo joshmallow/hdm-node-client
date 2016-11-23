@@ -24,11 +24,12 @@ describe('menu', function () {
         })
     });
 
-    it('should provide body of api response', function (done) {
+    it('should provide body of api response as an object', function (done) {
         var client = new Client();
         nockSuccessfulRequest();
         client.menu(function (err, body) {
-            expect(body).to.equal('Test Body');
+            expect(body).to.be.an('object');
+            expect(body).to.eql({ test : 'body' });
             done();
         })
     });
@@ -49,5 +50,5 @@ describe('menu', function () {
 function nockSuccessfulRequest() {
     return nock('https://hdmapp.mi.hdm-stuttgart.de')
         .get('/menu')
-        .reply(200, 'Test Body');
+        .reply(200, { test : 'body' });
 }
