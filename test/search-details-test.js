@@ -62,6 +62,19 @@ describe('searchDetails', function () {
             done();
         })
     });
+
+    it('should call done with details', function(done) {
+        var client;
+        client = new Client();
+        sandbox.stub(client,'search').callsArgWith(2, null, searchDetails);
+        sandbox.stub(client, 'details').callsArgWith(2, null, 'Test Result');
+
+        client.searchDetails('person', 'thomas', function (err, res) {
+            expect(err).to.equal(null);
+            expect(res).to.eql(['Test Result', 'Test Result']);
+            done();
+        })
+    });
 });
 
 var searchDetails = [
@@ -78,3 +91,4 @@ var searchDetails = [
         "type":  "person"
     }
 ];
+
