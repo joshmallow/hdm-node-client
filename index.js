@@ -52,7 +52,7 @@ Client.prototype.menu = function (done) {
     request.get(path, function (err, response, body) {
         if (err) {
             done(err);
-            return
+            return;
         }
         done(null, JSON.parse(body));
     });
