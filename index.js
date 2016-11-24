@@ -71,12 +71,7 @@ Client.prototype.searchDetails = function (type, query, done) {
                 callback(err);
             });
         }.bind(this), function (err) {
-            if (err) {
-                done(err);
-                return;
-            }
-            done(null, res);
-
+            done(err, res);
         })
     }.bind(this));
 };
