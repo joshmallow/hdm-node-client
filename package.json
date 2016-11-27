@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "xunit-test": "mocha --recursive -R xunit test/ > test-reports.xml"
+    "xunit-test": "mocha --recursive -R xunit test/ > test-reports.xml",
+    "preversion": "npm test"
   },
   "repository": {
     "type": "git",
