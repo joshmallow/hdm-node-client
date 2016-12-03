@@ -1,15 +1,14 @@
-var request = require('request');
-var urljoin = require('url-join');
-var async   = require('async');
-var util = require('util');
+const request = require('request');
+const urljoin = require('url-join');
+const async   = require('async');
+const util = require('util');
 
-var Client = function (url) {
+const Client = function (url) {
     this.url = url ? url : 'https://hdmapp.mi.hdm-stuttgart.de';
 };
 
 Client.prototype.search = function (type, query, done) {
-    var q, paths, error;
-    paths = {
+    const paths = {
         person:  urljoin(this.url, 'search', 'anonymous', 'persons'),
         lecture: urljoin(this.url, 'search', 'anonymous', 'lectures'),
         all:     urljoin(this.url, 'search', 'anonymous', 'all'),
@@ -17,7 +16,7 @@ Client.prototype.search = function (type, query, done) {
         event:   urljoin(this.url, 'search', 'anonymous', 'events')
     };
     if (paths.hasOwnProperty(type)) {
-        q = encodeURIComponent(query);
+        const q = encodeURIComponent(query);
         request.get(paths[type] + '?q=' + q, function (err, response, body) {
             if (err) {
                 done(err);
@@ -27,16 +26,15 @@ Client.prototype.search = function (type, query, done) {
             done(null, JSON.parse(body));
         });
     } else {
-        error = new Error('Type ' + type + ' is invalid.');
+        const error = new Error('Type ' + type + ' is invalid.');
         done(error, null);
     }
 };
 
 Client.prototype.details = function (type, id, done) {
-    var validTypes = ['person', 'lecture', 'event', 'room'];
-    var path = urljoin(this.url, 'details', 'anonymous', type, id);
-    var error;
+    const validTypes = ['person', 'lecture', 'event', 'room'];
     if (validTypes.indexOf(type) >= 0) {
+        const path = urljoin(this.url, 'details', 'anonymous', type, id);
         request.get(path, function (err, response, body) {
             if (err) {
                 done(err);
@@ -46,7 +44,7 @@ Client.prototype.details = function (type, id, done) {
             if (body) {
                 done(null, JSON.parse(body));
             } else {
-                error = new Error(util.format(
+                const error = new Error(util.format(
                     'The API could not provide details for a %s with the id %s',
                     type, id));
                 done(error, null);
@@ -59,7 +57,7 @@ Client.prototype.details = function (type, id, done) {
 };
 
 Client.prototype.menu = function (done) {
-    var path = urljoin(this.url, 'menu');
+    const path = urljoin(this.url, 'menu');
     request.get(path, function (err, response, body) {
         if (err) {
             done(err);
@@ -71,13 +69,13 @@ Client.prototype.menu = function (done) {
 };
 
 Client.prototype.searchDetails = function (type, query, done) {
-    var res = [];
     this.search(type, query, (err, results) => {
         if (err) {
             done(err);
             return;
         }
 
+        const res = [];
         async.each(results, (result, callback) => {
             this.details(result.type, result.id, function (err, det) {
                 res.push(det);

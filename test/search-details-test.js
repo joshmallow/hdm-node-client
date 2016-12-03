@@ -1,9 +1,9 @@
-var Client = require('../');
-var expect = require('chai').expect;
-var sinon = require('sinon');
-var sandbox = sinon.sandbox.create();
+const Client = require('../');
+const expect = require('chai').expect;
+const sinon = require('sinon');
+const sandbox = sinon.sandbox.create();
 
-var searchDetails = [
+const searchDetails = [
     {
         id:    6367009,
         title: 'Thomas Wieland',
@@ -25,12 +25,12 @@ describe('searchDetails', function () {
     });
 
     it('should expose function #searchDetails', function () {
-        var client = new Client();
+        const client = new Client();
         expect(client.searchDetails).to.be.a('function');
     });
 
     it('should call #search', function (done) {
-        var client = new Client();
+        const client = new Client();
 
         client.search = function (type, query, cb) {
             expect(type).to.equal('person');
@@ -43,9 +43,8 @@ describe('searchDetails', function () {
     });
 
     it('should call details for every search result', function (done) {
-        var client, mock;
-        client = new Client();
-        mock = sandbox.mock(client).expects('details')
+        const client = new Client();
+        const mock = sandbox.mock(client).expects('details')
             .twice()
             .callsArgWith(2, null, 'test detail');
         client.search = sandbox.stub().callsArgWith(2, null, searchDetails);
@@ -57,7 +56,7 @@ describe('searchDetails', function () {
     });
 
     it('should call done with error if #search throws one', function (done) {
-        var client = new Client();
+        const client = new Client();
         client.search = sandbox.stub().callsArgWith(2, 'Test Error', null);
 
         client.searchDetails('person', 'thomas', function (err) {
@@ -67,8 +66,7 @@ describe('searchDetails', function () {
     });
 
     it('should call done with error if #details throws one', function (done) {
-        var client;
-        client = new Client();
+        const client = new Client();
         sandbox.stub(client, 'search').callsArgWith(2, null, searchDetails);
         sandbox.stub(client, 'details').callsArgWith(2, 'Test Error', null);
 
@@ -79,8 +77,7 @@ describe('searchDetails', function () {
     });
 
     it('should call done with details', function (done) {
-        var client;
-        client = new Client();
+        const client = new Client();
         sandbox.stub(client, 'search').callsArgWith(2, null, searchDetails);
         sandbox.stub(client, 'details').callsArgWith(2, null, 'Test Result');
 

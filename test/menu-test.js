@@ -1,6 +1,6 @@
-var expect = require('chai').expect;
-var Client = require('../');
-var nock = require('nock');
+const expect = require('chai').expect;
+const Client = require('../');
+const nock = require('nock');
 
 describe('menu', function () {
 
@@ -9,14 +9,13 @@ describe('menu', function () {
     });
 
     it('should provide function #menu', function () {
-        var client = new Client();
+        const client = new Client();
         expect(client.menu).to.be.a('function');
     });
 
     it('make api call', function (done) {
-        var client, scope;
-        client = new Client();
-        scope = nockSuccessfulRequest();
+        const scope = nockSuccessfulRequest();
+        const client = new Client();
 
         client.menu(function () {
             scope.done();
@@ -25,8 +24,8 @@ describe('menu', function () {
     });
 
     it('should provide body of api response as an object', function (done) {
-        var client = new Client();
         nockSuccessfulRequest();
+        const client = new Client();
         client.menu(function (err, body) {
             expect(body).to.be.an('object');
             expect(body).to.eql({ test: 'body' });
@@ -35,11 +34,11 @@ describe('menu', function () {
     });
 
     it('should provide error if api returns one', function (done) {
-        var client = new Client();
         nock('https://hdmapp.mi.hdm-stuttgart.de')
             .get('/menu')
             .replyWithError('Test Error');
 
+        const client = new Client();
         client.menu(function (err) {
             expect(err.message).to.equal('Test Error');
             done();

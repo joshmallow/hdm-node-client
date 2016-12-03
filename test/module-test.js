@@ -1,4 +1,4 @@
-var expect = require('chai').expect;
+const expect = require('chai').expect;
 
 describe('module test', function () {
     it('should find a module in root', function () {
