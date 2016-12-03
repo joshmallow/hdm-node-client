@@ -1,8 +1,3 @@
-/**
- *
- * Created by Jonas on 04.11.2016.
- */
-
 var expect = require('chai').expect;
 var Client = require('../');
 var nock = require('nock');

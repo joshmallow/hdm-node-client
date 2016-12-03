@@ -1,9 +1,3 @@
-/**
- * Test the client 'class'
- *
- * Created by Jonas on 03.11.2016.
- */
-
 var Client = require('../index');
 var expect = require('chai').expect;
 

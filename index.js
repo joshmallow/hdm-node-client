@@ -72,21 +72,21 @@ Client.prototype.menu = function (done) {
 
 Client.prototype.searchDetails = function (type, query, done) {
     var res = [];
-    this.search(type, query, function (err, results) {
+    this.search(type, query, (err, results) => {
         if (err) {
             done(err);
             return;
         }
 
-        async.each(results, function (result, callback) {
+        async.each(results, (result, callback) => {
             this.details(result.type, result.id, function (err, det) {
                 res.push(det);
                 callback(err);
             });
-        }.bind(this), function (err) {
+        }, function (err) {
             done(err, res);
         });
-    }.bind(this));
+    });
 };
 
 module.exports = Client;
