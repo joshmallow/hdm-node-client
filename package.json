@@ -6,7 +6,8 @@
   "scripts": {
     "test": "mocha",
     "xunit-test": "mocha --recursive -R xunit test/ > test-reports.xml",
-    "preversion": "npm test"
+    "preversion": "npm test",
+    "jscs": "jscs test index.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "jscs": "^3.0.7",
     "mocha": "^3.1.2",
     "nock": "^9.0.2",
     "rewire": "^2.5.2",

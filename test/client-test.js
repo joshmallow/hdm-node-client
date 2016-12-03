@@ -22,10 +22,10 @@ describe('Client', function () {
     it('should set default url when none is specified', function () {
         var client = new Client();
         expect(client.url).to.equal('https://hdmapp.mi.hdm-stuttgart.de');
-    })
+    });
 });
 
-function testURL (url) {
+function testURL(url) {
     var client = new Client(url);
     expect(client.url).to.equal(url);
 }

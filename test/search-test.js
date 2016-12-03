@@ -51,14 +51,14 @@ describe('search', function () {
         var client = new Client();
         nock('https://hdmapp.mi.hdm-stuttgart.de')
             .get('/search/anonymous/persons')
-            .query({ q : 'Pohl' })
-            .reply(200, {'Test' : 'Response'});
+            .query({ q: 'Pohl' })
+            .reply(200, { Test: 'Response' });
 
         client.search('person', 'Pohl', function (err, data) {
             expect(data).to.be.an('object');
-            expect(data).to.eql({'Test' : 'Response'});
+            expect(data).to.eql({ Test: 'Response' });
             done(err, data);
-        })
+        });
     });
 
     it('should call cb with the error message if api replies with an error', function (done) {
@@ -66,13 +66,13 @@ describe('search', function () {
 
         nock('https://hdmapp.mi.hdm-stuttgart.de')
             .get('/search/anonymous/persons')
-            .query({ q : 'Pohl' })
+            .query({ q: 'Pohl' })
             .replyWithError('Test Error');
 
         client.search('person', 'Pohl', function (err) {
             expect(err.message).to.equal('Test Error');
             done();
-        })
+        });
     });
 
     it('should not make request if type is invalid', function (done) {
@@ -87,7 +87,7 @@ describe('search', function () {
         client.search('food', 'Pohl', function () {
             expect(scope.isDone()).to.be.false;
             done();
-        })
+        });
     });
 
     it('should provide error message if type is invalid', function (done) {
@@ -95,21 +95,21 @@ describe('search', function () {
         client.search('food', 'Pohl', function (err) {
             expect(err.message).to.equal('Type food is invalid.');
             done();
-        })
-    })
+        });
+    });
 });
 
-function spySearchRequest (type, query, path, done) {
+function spySearchRequest(type, query, path, done) {
     var client, scope;
 
     scope = nock('https://hdmapp.mi.hdm-stuttgart.de')
         .get(path)
-        .query({q: query})
-        .reply(200, {'Test' : 'Response'});
+        .query({ q: query })
+        .reply(200, { Test: 'Response' });
 
     client = new Client();
     client.search(type, query, function () {
         scope.done();
         done();
-    })
+    });
 }

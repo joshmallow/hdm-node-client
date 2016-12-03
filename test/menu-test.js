@@ -21,7 +21,7 @@ describe('menu', function () {
         client.menu(function () {
             scope.done();
             done();
-        })
+        });
     });
 
     it('should provide body of api response as an object', function (done) {
@@ -29,9 +29,9 @@ describe('menu', function () {
         nockSuccessfulRequest();
         client.menu(function (err, body) {
             expect(body).to.be.an('object');
-            expect(body).to.eql({ test : 'body' });
+            expect(body).to.eql({ test: 'body' });
             done();
-        })
+        });
     });
 
     it('should provide error if api returns one', function (done) {
@@ -43,12 +43,12 @@ describe('menu', function () {
         client.menu(function (err) {
             expect(err.message).to.equal('Test Error');
             done();
-        })
-    })
+        });
+    });
 });
 
 function nockSuccessfulRequest() {
     return nock('https://hdmapp.mi.hdm-stuttgart.de')
         .get('/menu')
-        .reply(200, { test : 'body' });
+        .reply(200, { test: 'body' });
 }

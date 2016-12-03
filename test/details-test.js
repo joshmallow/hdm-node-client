@@ -55,7 +55,7 @@ describe('details', function () {
         client.details('food', '1221', function () {
             expect(scope.isDone()).to.be.false;
             done();
-        })
+        });
     });
 
     it('should provide an error method if type is invalid', function (done) {
@@ -63,7 +63,7 @@ describe('details', function () {
         client.details('food', '1234', function (err) {
             expect(err.message).to.equal('Type food is invalid.');
             done();
-        })
+        });
     });
 
     it('should provide the error if api responds with one', function (done) {
@@ -76,33 +76,64 @@ describe('details', function () {
         client.details('person', '123', function (err) {
             expect(err.message).to.equal('Test Error');
             done();
-        })
+        });
+    });
+
+    describe('handling missing body', function () {
+        function testReactionToEmptyResponse(type, id, done) {
+            var client = new Client();
+            nock('https://hdmapp.mi.hdm-stuttgart.de')
+                .get('/details/anonymous/' + type + '/' + id)
+                .reply(200, undefined);
+
+            client.details(type, id, function (err) {
+                expect(err.message).to.equal('The API could not provide details ' +
+                    'for a ' + type + ' with the id ' + id);
+                done();
+            });
+        }
+
+        it('should provide an error if no person is found', function (done) {
+            testReactionToEmptyResponse('person', 108, done);
+        });
+
+        it('should provide an error if no lecture is found', function (done) {
+            testReactionToEmptyResponse('lecture', 123, done);
+        });
+
+        it('should provide an error if no event is found', function (done) {
+            testReactionToEmptyResponse('event', 11111, done);
+        });
+
+        it('should provide an error if no room is found', function (done) {
+            testReactionToEmptyResponse('room', 11111, done);
+        });
     });
 
     it('should provide response body of api call as object', function (done) {
         var client = new Client();
         nock('https://hdmapp.mi.hdm-stuttgart.de')
             .get('/details/anonymous/person/123')
-            .reply(200, {'Test' : 'Response'});
+            .reply(200, { Test: 'Response' });
 
         client.details('person', '123', function (err, data) {
             expect(data).to.be.an('object');
-            expect(data).to.eql({'Test' : 'Response'});
+            expect(data).to.eql({ Test: 'Response' });
             done(err, data);
-        })
-    })
+        });
+    });
 });
 
-function spyDetailsRequest(type, id, path ,done) {
+function spyDetailsRequest(type, id, path, done) {
     var client, scope;
 
     scope = nock('https://hdmapp.mi.hdm-stuttgart.de')
         .get(path)
-        .reply(200, {Test : 'response'});
+        .reply(200, { Test: 'response' });
 
     client = new Client();
     client.details(type, id, function () {
         scope.done();
         done();
-    })
+    });
 }

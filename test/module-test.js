@@ -12,6 +12,6 @@ describe('module test', function () {
     });
 });
 
-function requireModule () {
+function requireModule() {
     return require('../');
 }
