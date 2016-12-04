@@ -91,6 +91,19 @@ describe('search', function () {
             done();
         });
     });
+
+    it('should provide error if parsing body fails', function (done) {
+        nock('https://hdmapp.mi.hdm-stuttgart.de')
+            .get(/.*/)
+            .query(true)
+            .reply('200', 'No JSON');
+        const client = new Client();
+        client.search('person', 'Pohl', function (err, res) {
+            expect(err.name).to.equal('SyntaxError');
+            expect(res).to.equal(null);
+            done();
+        });
+    });
 });
 
 function spySearchRequest(type, query, path, done) {

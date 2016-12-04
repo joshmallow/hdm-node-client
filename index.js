@@ -23,7 +23,11 @@ Client.prototype.search = function (type, query, done) {
                 return;
             }
 
-            done(null, JSON.parse(body));
+            try {
+                done(null, JSON.parse(body));
+            } catch (error) {
+                done(error, null);
+            }
         });
     } else {
         const error = new Error('Type ' + type + ' is invalid.');
