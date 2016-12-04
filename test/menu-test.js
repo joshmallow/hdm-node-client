@@ -44,6 +44,19 @@ describe('menu', function () {
             done();
         });
     });
+
+    it('should provide error if parsing body fails', function (done) {
+        nock('https://hdmapp.mi.hdm-stuttgart.de')
+            .get('/menu')
+            .query(true)
+            .reply('200', 'No JSON');
+        const client = new Client();
+        client.menu(function (err, res) {
+            expect(err.name).to.equal('SyntaxError');
+            expect(res).to.equal(null);
+            done();
+        });
+    });
 });
 
 function nockSuccessfulRequest() {

@@ -68,7 +68,11 @@ Client.prototype.menu = function (done) {
             return;
         }
 
-        done(null, JSON.parse(body));
+        try {
+            done(null, JSON.parse(body));
+        } catch (error) {
+            done(error, null);
+        }
     });
 };
 
