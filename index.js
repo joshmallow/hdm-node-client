@@ -18,20 +18,10 @@ Client.prototype.search = function (type, query, done) {
     if (paths.hasOwnProperty(type)) {
         const q = encodeURIComponent(query);
         request.get(paths[type] + '?q=' + q, function (err, response, body) {
-            if (err) {
-                done(err);
-                return;
-            }
-
-            try {
-                done(null, JSON.parse(body));
-            } catch (error) {
-                done(error, null);
-            }
+            provideResponse(err, body, done);
         });
     } else {
-        const error = new Error('Type ' + type + ' is invalid.');
-        done(error, null);
+        done(new Error('Type ' + type + ' is invalid.'), null);
     }
 };
 
@@ -40,22 +30,15 @@ Client.prototype.details = function (type, id, done) {
     if (validTypes.indexOf(type) >= 0) {
         const path = urljoin(this.url, 'details', 'anonymous', type, id);
         request.get(path, function (err, response, body) {
-            if (err) {
-                done(err);
-                return;
-            }
-
-            if (body) {
-                done(null, JSON.parse(body));
-            } else {
+            provideResponse(err, body, done, function () {
                 const error = new Error(util.format(
                     'The API could not provide details for a %s with the id %s',
                     type, id));
                 done(error, null);
-            }
+            });
         });
     } else {
-        done(new Error('Type ' + type + ' is invalid.'));
+        done(new Error('Type ' + type + ' is invalid.'), null);
     }
 
 };
@@ -63,16 +46,7 @@ Client.prototype.details = function (type, id, done) {
 Client.prototype.menu = function (done) {
     const path = urljoin(this.url, 'menu');
     request.get(path, function (err, response, body) {
-        if (err) {
-            done(err);
-            return;
-        }
-
-        try {
-            done(null, JSON.parse(body));
-        } catch (error) {
-            done(error, null);
-        }
+        provideResponse(err, body, done);
     });
 };
 
@@ -94,5 +68,22 @@ Client.prototype.searchDetails = function (type, query, done) {
         });
     });
 };
+
+function provideResponse(err, body, done, onMissingBody) {
+    if (err) {
+        done(err);
+        return;
+    }
+
+    if (onMissingBody && !body) {
+        onMissingBody();
+    } else {
+        try {
+            done(null, JSON.parse(body));
+        } catch (error) {
+            done(error, null);
+        }
+    }
+}
 
 module.exports = Client;

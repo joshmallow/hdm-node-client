@@ -86,8 +86,9 @@ describe('search', function () {
 
     it('should provide error message if type is invalid', function (done) {
         const  client = new Client();
-        client.search('food', 'Pohl', function (err) {
+        client.search('food', 'Pohl', function (err, res) {
             expect(err.message).to.equal('Type food is invalid.');
+            expect(res).to.equal(null);
             done();
         });
     });

@@ -54,8 +54,9 @@ describe('details', function () {
 
     it('should provide an error method if type is invalid', function (done) {
         const client = new Client();
-        client.details('food', '1234', function (err) {
+        client.details('food', '1234', function (err, response) {
             expect(err.message).to.equal('Type food is invalid.');
+            expect(response).to.equal(null);
             done();
         });
     });
@@ -115,6 +116,19 @@ describe('details', function () {
             expect(data).to.be.an('object');
             expect(data).to.eql({ Test: 'Response' });
             done(err, data);
+        });
+    });
+
+    it('should provide error if parsing body fails', function (done) {
+        nock('https://hdmapp.mi.hdm-stuttgart.de')
+            .get('/details/anonymous/person/123')
+            .query(true)
+            .reply('200', 'No JSON');
+        const client = new Client();
+        client.details('person', '123', function (err, res) {
+            expect(err.name).to.equal('SyntaxError');
+            expect(res).to.equal(null);
+            done();
         });
     });
 });
