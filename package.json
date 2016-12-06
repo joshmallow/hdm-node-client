@@ -7,6 +7,7 @@
     "test": "mocha",
     "xunit-test": "mocha --recursive -R xunit test/ > test-reports.xml",
     "preversion": "npm test",
+    "lint": "jshint test index.js",
     "jscs": "jscs test index.js"
   },
   "repository": {
@@ -24,6 +25,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "jscs": "^3.0.7",
+    "jshint": "^2.9.4",
     "mocha": "^3.1.2",
     "nock": "^9.0.2",
     "rewire": "^2.5.2",

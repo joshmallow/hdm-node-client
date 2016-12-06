@@ -3,6 +3,7 @@ const Client = require('../');
 const nock = require('nock');
 
 describe('menu', function () {
+    'use strict';
 
     afterEach(function () {
         nock.cleanAll();
@@ -60,6 +61,7 @@ describe('menu', function () {
 });
 
 function nockSuccessfulRequest() {
+    'use strict';
     return nock('https://hdmapp.mi.hdm-stuttgart.de')
         .get('/menu')
         .reply(200, { test: 'body' });

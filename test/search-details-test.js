@@ -19,6 +19,7 @@ const searchDetails = [
 ];
 
 describe('searchDetails', function () {
+    'use strict';
 
     beforeEach(function () {
         sandbox.restore();

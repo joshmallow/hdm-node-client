@@ -2,6 +2,7 @@ const Client = require('../index');
 const expect = require('chai').expect;
 
 describe('Client', function () {
+    'use strict';
 
     it('should be a function', function () {
         expect(Client).to.be.a('function');
@@ -20,6 +21,7 @@ describe('Client', function () {
 });
 
 function testURL(url) {
+    'use strict';
     const client = new Client(url);
     expect(client.url).to.equal(url);
 }

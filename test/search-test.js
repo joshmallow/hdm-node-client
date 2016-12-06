@@ -3,6 +3,7 @@ const expect = require('chai').expect;
 const nock = require('nock');
 
 describe('search', function () {
+    'use strict';
 
     afterEach(function () {
         nock.cleanAll();
@@ -79,7 +80,7 @@ describe('search', function () {
 
         const client = new Client();
         client.search('food', 'Pohl', function () {
-            expect(scope.isDone()).to.be.false;
+            expect(scope.isDone()).to.equal(false);
             done();
         });
     });
@@ -108,6 +109,8 @@ describe('search', function () {
 });
 
 function spySearchRequest(type, query, path, done) {
+    'use strict';
+
     const scope = nock('https://hdmapp.mi.hdm-stuttgart.de')
         .get(path)
         .query({ q: query })

@@ -4,10 +4,12 @@ const async   = require('async');
 const util = require('util');
 
 const Client = function (url) {
+    'use strict';
     this.url = url ? url : 'https://hdmapp.mi.hdm-stuttgart.de';
 };
 
 Client.prototype.search = function (type, query, done) {
+    'use strict';
     const paths = {
         person:  urljoin(this.url, 'search', 'anonymous', 'persons'),
         lecture: urljoin(this.url, 'search', 'anonymous', 'lectures'),
@@ -26,6 +28,7 @@ Client.prototype.search = function (type, query, done) {
 };
 
 Client.prototype.details = function (type, id, done) {
+    'use strict';
     const validTypes = ['person', 'lecture', 'event', 'room'];
     if (validTypes.indexOf(type) >= 0) {
         const path = urljoin(this.url, 'details', 'anonymous', type, id);
@@ -44,6 +47,7 @@ Client.prototype.details = function (type, id, done) {
 };
 
 Client.prototype.menu = function (done) {
+    'use strict';
     const path = urljoin(this.url, 'menu');
     request.get(path, function (err, response, body) {
         provideResponse(err, body, done);
@@ -51,6 +55,7 @@ Client.prototype.menu = function (done) {
 };
 
 Client.prototype.searchDetails = function (type, query, done) {
+    'use strict';
     this.search(type, query, (err, results) => {
         if (err) {
             done(err);
@@ -70,6 +75,7 @@ Client.prototype.searchDetails = function (type, query, done) {
 };
 
 function provideResponse(err, body, done, onMissingBody) {
+    'use strict';
     if (err) {
         done(err);
         return;

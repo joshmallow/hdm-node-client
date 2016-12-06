@@ -3,6 +3,7 @@ const Client = require('../');
 const nock = require('nock');
 
 describe('details', function () {
+    'use strict';
 
     afterEach(function () {
         nock.cleanAll();
@@ -47,7 +48,7 @@ describe('details', function () {
 
         const client = new Client();
         client.details('food', '1221', function () {
-            expect(scope.isDone()).to.be.false;
+            expect(scope.isDone()).to.equal(false);
             done();
         });
     });
@@ -134,6 +135,8 @@ describe('details', function () {
 });
 
 function spyDetailsRequest(type, id, path, done) {
+    'use strict';
+
     const scope = nock('https://hdmapp.mi.hdm-stuttgart.de')
         .get(path)
         .reply(200, { Test: 'response' });
