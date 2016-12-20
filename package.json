@@ -1,6 +1,6 @@
 {
   "name": "hdm-client",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Client for the Stuttgart Media University API",
   "main": "index.js",
   "scripts": {
