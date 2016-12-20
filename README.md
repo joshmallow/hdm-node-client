@@ -31,23 +31,23 @@ client.searchDetails('person', 'Smith', {maxResults: 1}, function (err, result) 
 
 ## API ##
 
-####`search(type, query, options, callback)`####
+#### `search(type, query, options, callback)` ####
 - `type {string}` - all/room/person/event/lecture
 - `query {string}` - Your search query
 - `options {object}` - maxResults
 - `callback {function}` - Called with the search result (error first)  
 
-####`details(type, id, options, callback)`####
+#### `details(type, id, options, callback)` ####
 - `type {string}` - room/person/event/lecture
 - `id {number}` - id of the ressource
 - `options {number}` - None
 - `callback {function}` - Called with the details (error first)
 
-####`menu(options, callback)`####
+#### `menu(options, callback)` ####
 - `options {number}` - None
 - `callback {function}` - Called with the menu (error first)
 
-####`searchDetails(type, query, options, callback)`####
+#### `searchDetails(type, query, options, callback)` ####
 - `type {string}` - all/room/person/event/lecture
 - `query {number}` - Your search query
 - `options {number}` - maxResults
@@ -56,7 +56,7 @@ client.searchDetails('person', 'Smith', {maxResults: 1}, function (err, result) 
 The client currently does not support authentication. That means that you won't find any students when searching persons.
 
 ### Options ###
-####`maxResults {number}`####
+#### `maxResults {number}` ####
 Restricts the number of results that are presented to you. Used for `search` this does not improve performance, for `searchDetails` it does.
 
 ### Running Tests ###
