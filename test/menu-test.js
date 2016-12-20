@@ -1,6 +1,7 @@
 const expect = require('chai').expect;
 const Client = require('../');
 const nock = require('nock');
+const client = new Client();
 
 describe('menu', function () {
     'use strict';
@@ -10,14 +11,11 @@ describe('menu', function () {
     });
 
     it('should provide function #menu', function () {
-        const client = new Client();
         expect(client.menu).to.be.a('function');
     });
 
     it('make api call', function (done) {
-        const scope = nockSuccessfulRequest();
-        const client = new Client();
-
+        const scope = nockSuccessfulRequest({ test: 'body' });
         client.menu({}, function () {
             scope.done();
             done();
@@ -25,8 +23,7 @@ describe('menu', function () {
     });
 
     it('should provide body of api response as an object', function (done) {
-        nockSuccessfulRequest();
-        const client = new Client();
+        nockSuccessfulRequest({ test: 'body' });
         client.menu({}, function (err, body) {
             expect(body).to.be.an('object');
             expect(body).to.eql({ test: 'body' });
@@ -39,7 +36,6 @@ describe('menu', function () {
             .get('/menu')
             .replyWithError('Test Error');
 
-        const client = new Client();
         client.menu({}, function (err) {
             expect(err.message).to.equal('Test Error');
             done();
@@ -47,11 +43,7 @@ describe('menu', function () {
     });
 
     it('should provide error if parsing body fails', function (done) {
-        nock('https://hdmapp.mi.hdm-stuttgart.de')
-            .get('/menu')
-            .query(true)
-            .reply('200', 'No JSON');
-        const client = new Client();
+        nockSuccessfulRequest('No JSON');
         client.menu({}, function (err, res) {
             expect(err.name).to.equal('SyntaxError');
             expect(res).to.equal(null);
@@ -60,9 +52,9 @@ describe('menu', function () {
     });
 });
 
-function nockSuccessfulRequest() {
+function nockSuccessfulRequest(result) {
     'use strict';
-    return nock('https://hdmapp.mi.hdm-stuttgart.de')
+    return nock(client.url)
         .get('/menu')
-        .reply(200, { test: 'body' });
+        .reply(200, result);
 }

@@ -20,7 +20,7 @@ Client.prototype.search = function (type, query, options, done) {
     if (paths.hasOwnProperty(type)) {
         const q = encodeURIComponent(query);
         request.get(paths[type] + '?q=' + q, function (err, response, body) {
-            provideResponse(err, body, done);
+            provideResponse(err, body, options, done);
         });
     } else {
         done(new Error('Type ' + type + ' is invalid.'), null);
@@ -33,7 +33,7 @@ Client.prototype.details = function (type, id, options, done) {
     if (validTypes.indexOf(type) >= 0) {
         const path = urljoin(this.url, 'details', 'anonymous', type, id);
         request.get(path, function (err, response, body) {
-            provideResponse(err, body, done, function () {
+            provideResponse(err, body, {}, done, function () {
                 const error = new Error(util.format(
                     'The API could not provide details for a %s with the id %s',
                     type, id));
@@ -50,7 +50,7 @@ Client.prototype.menu = function (options, done) {
     'use strict';
     const path = urljoin(this.url, 'menu');
     request.get(path, function (err, response, body) {
-        provideResponse(err, body, done);
+        provideResponse(err, body, {}, done);
     });
 };
 
@@ -74,7 +74,7 @@ Client.prototype.searchDetails = function (type, query, options, done) {
     });
 };
 
-function provideResponse(err, body, done, onMissingBody) {
+function provideResponse(err, body, options, done, onMissingBody) {
     'use strict';
     if (err) {
         done(err);
@@ -85,11 +85,17 @@ function provideResponse(err, body, done, onMissingBody) {
         onMissingBody();
     } else {
         try {
-            done(null, JSON.parse(body));
+            done(null, applyOptions(JSON.parse(body), options));
         } catch (error) {
             done(error, null);
         }
     }
+}
+
+function applyOptions(body, options) {
+    'use strict';
+
+    return Array.isArray(body) && options.maxResults ? body.slice(0, options.maxResults) : body;
 }
 
 module.exports = Client;

@@ -1,9 +1,13 @@
 const Client = require('../');
 const expect = require('chai').expect;
-const sinon = require('sinon');
-const sandbox = sinon.sandbox.create();
+const nock = require('nock');
+const utils = require('./utils');
 
-const searchDetails = [
+const PERSON_SEARCH_PATH = '/search/anonymous/persons';
+const PERSON_DETAILS_PATH = '/details/anonymous/person/';
+const client = new Client();
+
+const searchResults = [
     {
         id:    6367009,
         title: 'Thomas Wieland',
@@ -18,85 +22,98 @@ const searchDetails = [
     }
 ];
 
+const details = [
+    { personID: 6367009, job: 'Lehrbeauftragter' },
+    { personID: 6368845, job: 'Lehrbeauftragter' }
+];
+
 describe('searchDetails', function () {
     'use strict';
 
     beforeEach(function () {
-        sandbox.restore();
+        nock.cleanAll();
     });
 
     it('should expose function #searchDetails', function () {
-        const client = new Client();
         expect(client.searchDetails).to.be.a('function');
     });
 
-    it('should call #search', function (done) {
-        const client = new Client();
-        const options = { maxResults: 3 };
+    it('should make search', function (done) {
+        const scope = nockSuccessfulSearch('thomas', {});
 
-        client.search = function (type, query, opt, cb) {
-            expect(type).to.equal('person');
-            expect(query).to.equal('thomas');
-            expect(opt).to.equal(options);
-            expect(cb).to.be.a('function');
+        client.searchDetails('person', 'thomas', {}, function () {
+            scope.done();
             done();
-        };
-
-        client.searchDetails('person', 'thomas', options);
-    });
-
-    it('should call details for every search result', function (done) {
-        const client = new Client();
-        const options = { maxResults: 7 };
-        const mock = sandbox.mock(client);
-
-        mock.expects('details')
-            .once()
-            .withExactArgs('person', 6367009, options, sinon.match.typeOf('function'))
-            .callsArgWith(3, null);
-        mock.expects('details')
-            .once()
-            .withExactArgs('person', 6368845, options, sinon.match.typeOf('function'))
-            .callsArgWith(3, null);
-        client.search = sandbox.stub().callsArgWith(3, null, searchDetails);
-
-        client.searchDetails('person', 'thomas', options, function (err) {
-            mock.verify();
-            done(err);
         });
     });
 
-    it('should call done with error if #search throws one', function (done) {
-        const client = new Client();
-        client.search = sandbox.stub().callsArgWith(3, 'Test Error', null);
+    it('should look up details for every search result', function (done) {
+        const options = {};
+        const searchScope = nockSuccessfulSearch('thomas', searchResults);
+        const detailScopes =
+            searchResults.map((detail, index) => nockSuccessfulDetails(detail.id));
+
+        client.searchDetails('person', 'thomas', options, function () {
+            searchScope.done();
+            detailScopes.forEach((scope) => scope.done());
+            done();
+        });
+    });
+
+    it('should call done with error if search request causes one', function (done) {
+        nock(client.url)
+            .get(PERSON_SEARCH_PATH)
+            .query({ q: 'thomas' })
+            .replyWithError('Test Error');
 
         client.searchDetails('person', 'thomas', {}, function (err) {
-            expect(err).to.equal('Test Error');
+            expect(err.message).to.equal('Test Error');
             done();
         });
     });
 
     it('should call done with error if #details throws one', function (done) {
-        const client = new Client();
-        sandbox.stub(client, 'search').callsArgWith(3, null, searchDetails);
-        sandbox.stub(client, 'details').callsArgWith(3, 'Test Error', null);
+        nockSuccessfulSearch('thomas', searchResults.slice(0, 1));
+
+        nock(client.url)
+            .get(PERSON_DETAILS_PATH + searchResults[0].id)
+            .replyWithError('Test Error');
 
         client.searchDetails('person', 'thomas', {}, function (err) {
-            expect(err).to.equal('Test Error');
+            expect(err.message).to.equal('Test Error');
             done();
         });
     });
 
     it('should call done with details', function (done) {
-        const client = new Client();
-        sandbox.stub(client, 'search').callsArgWith(3, null, searchDetails);
-        sandbox.stub(client, 'details').callsArgWith(3, null, 'Test Result');
+        nockSuccessfulSearch('thomas', searchResults);
+        searchResults.forEach(
+            (detail, index) => nockSuccessfulDetails(detail.id, details[index]));
 
         client.searchDetails('person', 'thomas', {}, function (err, res) {
             expect(err).to.equal(null);
-            expect(res).to.eql(['Test Result', 'Test Result']);
+            expect(res).to.eql(details);
+            done();
+        });
+    });
+
+    it('should cause no error if maxResults option is used', function (done) {
+        nockSuccessfulSearch('thomas', searchResults.slice(0, 1));
+        nockSuccessfulDetails('6367009', details[0]);
+
+        client.searchDetails('person', 'thomas', { maxResults: 7 }, function (err) {
+            expect(err).to.equal(null);
             done();
         });
     });
 });
 
+function nockSuccessfulSearch(query, results) {
+    'use strict';
+    return utils.nockSuccessfulSearch(nock, client.url, PERSON_SEARCH_PATH, query, results);
+}
+
+function nockSuccessfulDetails(id, details) {
+    'use strict';
+    return utils.nockSuccessfulDetails(nock, client.url, PERSON_DETAILS_PATH + id, details);
+}

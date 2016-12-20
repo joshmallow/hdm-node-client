@@ -1,6 +1,11 @@
 const expect = require('chai').expect;
 const Client = require('../');
 const nock = require('nock');
+const utils = require('./utils');
+const urljoin = require('url-join');
+
+const client = new Client();
+const PERSON_DETAILS_PATH = '/details/anonymous/';
 
 describe('details', function () {
     'use strict';
@@ -10,7 +15,6 @@ describe('details', function () {
     });
 
     it('should expose function #details', function () {
-        const client = new Client();
         expect(client.details).to.be.a('function');
     });
 
@@ -46,7 +50,6 @@ describe('details', function () {
             .query(true)
             .reply('200');
 
-        const client = new Client();
         client.details('food', '1221', {}, function () {
             expect(scope.isDone()).to.equal(false);
             done();
@@ -54,7 +57,6 @@ describe('details', function () {
     });
 
     it('should provide an error method if type is invalid', function (done) {
-        const client = new Client();
         client.details('food', '1234', {}, function (err, response) {
             expect(err.message).to.equal('Type food is invalid.');
             expect(response).to.equal(null);
@@ -63,8 +65,6 @@ describe('details', function () {
     });
 
     it('should provide the error if api responds with one', function (done) {
-        const client = new Client();
-
         nock('https://hdmapp.mi.hdm-stuttgart.de')
             .get('/details/anonymous/person/123')
             .replyWithError('Test Error');
@@ -78,10 +78,7 @@ describe('details', function () {
     describe('handling missing body', function () {
 
         function testReactionToEmptyResponse(type, id, done) {
-            const client = new Client();
-            nock('https://hdmapp.mi.hdm-stuttgart.de')
-                .get('/details/anonymous/' + type + '/' + id)
-                .reply(200, undefined);
+            nockSuccessfulDetails(id, type, undefined);
 
             client.details(type, id, {}, function (err) {
                 expect(err.message).to.equal('The API could not provide details ' +
@@ -108,24 +105,19 @@ describe('details', function () {
     });
 
     it('should provide response body of api call as object', function (done) {
-        nock('https://hdmapp.mi.hdm-stuttgart.de')
-            .get('/details/anonymous/person/123')
-            .reply(200, { Test: 'Response' });
+        const details = { Test: 'Response' };
+        nockSuccessfulDetails('123', 'person', details);
 
-        const client = new Client();
         client.details('person', '123', {}, function (err, data) {
+            expect(err).to.equal(null);
             expect(data).to.be.an('object');
-            expect(data).to.eql({ Test: 'Response' });
-            done(err, data);
+            expect(data).to.eql(details);
+            done();
         });
     });
 
     it('should provide error if parsing body fails', function (done) {
-        nock('https://hdmapp.mi.hdm-stuttgart.de')
-            .get('/details/anonymous/person/123')
-            .query(true)
-            .reply('200', 'No JSON');
-        const client = new Client();
+        nockSuccessfulDetails(123, 'person', 'No JSON');
         client.details('person', '123', {}, function (err, res) {
             expect(err.name).to.equal('SyntaxError');
             expect(res).to.equal(null);
@@ -141,9 +133,14 @@ function spyDetailsRequest(type, id, path, done) {
         .get(path)
         .reply(200, { Test: 'response' });
 
-    const client = new Client();
     client.details(type, id, {}, function () {
         scope.done();
         done();
     });
+}
+
+function nockSuccessfulDetails(id, type, details) {
+    'use strict';
+    const path = urljoin(PERSON_DETAILS_PATH, type, id);
+    return utils.nockSuccessfulDetails(nock, client.url, path, details);
 }
