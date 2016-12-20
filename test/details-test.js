@@ -47,7 +47,7 @@ describe('details', function () {
             .reply('200');
 
         const client = new Client();
-        client.details('food', '1221', function () {
+        client.details('food', '1221', {}, function () {
             expect(scope.isDone()).to.equal(false);
             done();
         });
@@ -55,7 +55,7 @@ describe('details', function () {
 
     it('should provide an error method if type is invalid', function (done) {
         const client = new Client();
-        client.details('food', '1234', function (err, response) {
+        client.details('food', '1234', {}, function (err, response) {
             expect(err.message).to.equal('Type food is invalid.');
             expect(response).to.equal(null);
             done();
@@ -69,7 +69,7 @@ describe('details', function () {
             .get('/details/anonymous/person/123')
             .replyWithError('Test Error');
 
-        client.details('person', '123', function (err) {
+        client.details('person', '123', {}, function (err) {
             expect(err.message).to.equal('Test Error');
             done();
         });
@@ -83,7 +83,7 @@ describe('details', function () {
                 .get('/details/anonymous/' + type + '/' + id)
                 .reply(200, undefined);
 
-            client.details(type, id, function (err) {
+            client.details(type, id, {}, function (err) {
                 expect(err.message).to.equal('The API could not provide details ' +
                     'for a ' + type + ' with the id ' + id);
                 done();
@@ -113,7 +113,7 @@ describe('details', function () {
             .reply(200, { Test: 'Response' });
 
         const client = new Client();
-        client.details('person', '123', function (err, data) {
+        client.details('person', '123', {}, function (err, data) {
             expect(data).to.be.an('object');
             expect(data).to.eql({ Test: 'Response' });
             done(err, data);
@@ -126,7 +126,7 @@ describe('details', function () {
             .query(true)
             .reply('200', 'No JSON');
         const client = new Client();
-        client.details('person', '123', function (err, res) {
+        client.details('person', '123', {}, function (err, res) {
             expect(err.name).to.equal('SyntaxError');
             expect(res).to.equal(null);
             done();
@@ -142,7 +142,7 @@ function spyDetailsRequest(type, id, path, done) {
         .reply(200, { Test: 'response' });
 
     const client = new Client();
-    client.details(type, id, function () {
+    client.details(type, id, {}, function () {
         scope.done();
         done();
     });

@@ -8,7 +8,7 @@ const Client = function (url) {
     this.url = url ? url : 'https://hdmapp.mi.hdm-stuttgart.de';
 };
 
-Client.prototype.search = function (type, query, done) {
+Client.prototype.search = function (type, query, options, done) {
     'use strict';
     const paths = {
         person:  urljoin(this.url, 'search', 'anonymous', 'persons'),
@@ -27,7 +27,7 @@ Client.prototype.search = function (type, query, done) {
     }
 };
 
-Client.prototype.details = function (type, id, done) {
+Client.prototype.details = function (type, id, options, done) {
     'use strict';
     const validTypes = ['person', 'lecture', 'event', 'room'];
     if (validTypes.indexOf(type) >= 0) {
@@ -46,7 +46,7 @@ Client.prototype.details = function (type, id, done) {
 
 };
 
-Client.prototype.menu = function (done) {
+Client.prototype.menu = function (options, done) {
     'use strict';
     const path = urljoin(this.url, 'menu');
     request.get(path, function (err, response, body) {
@@ -54,9 +54,9 @@ Client.prototype.menu = function (done) {
     });
 };
 
-Client.prototype.searchDetails = function (type, query, done) {
+Client.prototype.searchDetails = function (type, query, options, done) {
     'use strict';
-    this.search(type, query, (err, results) => {
+    this.search(type, query, options, (err, results) => {
         if (err) {
             done(err);
             return;
@@ -64,7 +64,7 @@ Client.prototype.searchDetails = function (type, query, done) {
 
         const res = [];
         async.each(results, (result, callback) => {
-            this.details(result.type, result.id, function (err, det) {
+            this.details(result.type, result.id, options, function (err, det) {
                 res.push(det);
                 callback(err);
             });

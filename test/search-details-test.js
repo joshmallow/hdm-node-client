@@ -32,25 +32,35 @@ describe('searchDetails', function () {
 
     it('should call #search', function (done) {
         const client = new Client();
+        const options = { maxResults: 3 };
 
-        client.search = function (type, query, cb) {
+        client.search = function (type, query, opt, cb) {
             expect(type).to.equal('person');
             expect(query).to.equal('thomas');
+            expect(opt).to.equal(options);
             expect(cb).to.be.a('function');
             done();
         };
 
-        client.searchDetails('person', 'thomas');
+        client.searchDetails('person', 'thomas', options);
     });
 
     it('should call details for every search result', function (done) {
         const client = new Client();
-        const mock = sandbox.mock(client).expects('details')
-            .twice()
-            .callsArgWith(2, null, 'test detail');
-        client.search = sandbox.stub().callsArgWith(2, null, searchDetails);
+        const options = { maxResults: 7 };
+        const mock = sandbox.mock(client);
 
-        client.searchDetails('person', 'thomas', function (err) {
+        mock.expects('details')
+            .once()
+            .withExactArgs('person', 6367009, options, sinon.match.typeOf('function'))
+            .callsArgWith(3, null);
+        mock.expects('details')
+            .once()
+            .withExactArgs('person', 6368845, options, sinon.match.typeOf('function'))
+            .callsArgWith(3, null);
+        client.search = sandbox.stub().callsArgWith(3, null, searchDetails);
+
+        client.searchDetails('person', 'thomas', options, function (err) {
             mock.verify();
             done(err);
         });
@@ -58,9 +68,9 @@ describe('searchDetails', function () {
 
     it('should call done with error if #search throws one', function (done) {
         const client = new Client();
-        client.search = sandbox.stub().callsArgWith(2, 'Test Error', null);
+        client.search = sandbox.stub().callsArgWith(3, 'Test Error', null);
 
-        client.searchDetails('person', 'thomas', function (err) {
+        client.searchDetails('person', 'thomas', {}, function (err) {
             expect(err).to.equal('Test Error');
             done();
         });
@@ -68,10 +78,10 @@ describe('searchDetails', function () {
 
     it('should call done with error if #details throws one', function (done) {
         const client = new Client();
-        sandbox.stub(client, 'search').callsArgWith(2, null, searchDetails);
-        sandbox.stub(client, 'details').callsArgWith(2, 'Test Error', null);
+        sandbox.stub(client, 'search').callsArgWith(3, null, searchDetails);
+        sandbox.stub(client, 'details').callsArgWith(3, 'Test Error', null);
 
-        client.searchDetails('person', 'thomas', function (err) {
+        client.searchDetails('person', 'thomas', {}, function (err) {
             expect(err).to.equal('Test Error');
             done();
         });
@@ -79,10 +89,10 @@ describe('searchDetails', function () {
 
     it('should call done with details', function (done) {
         const client = new Client();
-        sandbox.stub(client, 'search').callsArgWith(2, null, searchDetails);
-        sandbox.stub(client, 'details').callsArgWith(2, null, 'Test Result');
+        sandbox.stub(client, 'search').callsArgWith(3, null, searchDetails);
+        sandbox.stub(client, 'details').callsArgWith(3, null, 'Test Result');
 
-        client.searchDetails('person', 'thomas', function (err, res) {
+        client.searchDetails('person', 'thomas', {}, function (err, res) {
             expect(err).to.equal(null);
             expect(res).to.eql(['Test Result', 'Test Result']);
             done();

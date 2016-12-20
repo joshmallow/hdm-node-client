@@ -51,7 +51,7 @@ describe('search', function () {
             .query({ q: 'Pohl' })
             .reply(200, { Test: 'Response' });
 
-        client.search('person', 'Pohl', function (err, data) {
+        client.search('person', 'Pohl', {}, function (err, data) {
             expect(data).to.be.an('object');
             expect(data).to.eql({ Test: 'Response' });
             done(err, data);
@@ -66,7 +66,7 @@ describe('search', function () {
             .query({ q: 'Pohl' })
             .replyWithError('Test Error');
 
-        client.search('person', 'Pohl', function (err) {
+        client.search('person', 'Pohl', {}, function (err) {
             expect(err.message).to.equal('Test Error');
             done();
         });
@@ -79,7 +79,7 @@ describe('search', function () {
             .reply('200');
 
         const client = new Client();
-        client.search('food', 'Pohl', function () {
+        client.search('food', 'Pohl', {}, function () {
             expect(scope.isDone()).to.equal(false);
             done();
         });
@@ -87,7 +87,7 @@ describe('search', function () {
 
     it('should provide error message if type is invalid', function (done) {
         const  client = new Client();
-        client.search('food', 'Pohl', function (err, res) {
+        client.search('food', 'Pohl', {}, function (err, res) {
             expect(err.message).to.equal('Type food is invalid.');
             expect(res).to.equal(null);
             done();
@@ -100,7 +100,7 @@ describe('search', function () {
             .query(true)
             .reply('200', 'No JSON');
         const client = new Client();
-        client.search('person', 'Pohl', function (err, res) {
+        client.search('person', 'Pohl', {}, function (err, res) {
             expect(err.name).to.equal('SyntaxError');
             expect(res).to.equal(null);
             done();
@@ -117,7 +117,7 @@ function spySearchRequest(type, query, path, done) {
         .reply(200, { Test: 'Response' });
 
     const client = new Client();
-    client.search(type, query, function () {
+    client.search(type, query, {}, function () {
         scope.done();
         done();
     });

@@ -18,7 +18,7 @@ describe('menu', function () {
         const scope = nockSuccessfulRequest();
         const client = new Client();
 
-        client.menu(function () {
+        client.menu({}, function () {
             scope.done();
             done();
         });
@@ -27,7 +27,7 @@ describe('menu', function () {
     it('should provide body of api response as an object', function (done) {
         nockSuccessfulRequest();
         const client = new Client();
-        client.menu(function (err, body) {
+        client.menu({}, function (err, body) {
             expect(body).to.be.an('object');
             expect(body).to.eql({ test: 'body' });
             done();
@@ -40,7 +40,7 @@ describe('menu', function () {
             .replyWithError('Test Error');
 
         const client = new Client();
-        client.menu(function (err) {
+        client.menu({}, function (err) {
             expect(err.message).to.equal('Test Error');
             done();
         });
@@ -52,7 +52,7 @@ describe('menu', function () {
             .query(true)
             .reply('200', 'No JSON');
         const client = new Client();
-        client.menu(function (err, res) {
+        client.menu({}, function (err, res) {
             expect(err.name).to.equal('SyntaxError');
             expect(res).to.equal(null);
             done();
