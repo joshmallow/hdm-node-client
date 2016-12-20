@@ -62,6 +62,7 @@ Restricts the number of results that are presented to you. Used for `search` thi
 ### Running Tests ###
 
 There are three scripts you can use to run tests and analyse the code:
+
 - `npm test`: Runs all the unit tests
 - `npm run lint`: Runs JSHint (Rules can be found in `.jshintrc`)
 - `npm run jscs`: Runs JSCS (Rules can be found in `.jscsrc`)
