@@ -17,78 +17,67 @@ Client.prototype.search = function (type, query, options, done) {
         room:    urljoin(this.url, 'search', 'anonymous', 'rooms'),
         event:   urljoin(this.url, 'search', 'anonymous', 'events')
     };
-    if (paths.hasOwnProperty(type)) {
-        const q = encodeURIComponent(query);
-        request.get(paths[type] + '?q=' + q, function (err, response, body) {
-            provideResponse(err, body, options, done);
-        });
-    } else {
-        done(new Error('Type ' + type + ' is invalid.'), null);
+
+    if (!paths.hasOwnProperty(type)) {
+        done(new Error(`Type ${type} is invalid.`), null);
+        return;
     }
+
+    const q = encodeURIComponent(query);
+    async.waterfall([
+        (cb) => request.get(paths[type] + '?q=' + q, cb),
+        (res, body, cb) => provideResponse(body, options, cb)
+    ], done);
 };
 
 Client.prototype.details = function (type, id, options, done) {
     'use strict';
     const validTypes = ['person', 'lecture', 'event', 'room'];
-    if (validTypes.indexOf(type) >= 0) {
-        const path = urljoin(this.url, 'details', 'anonymous', type, id);
-        request.get(path, function (err, response, body) {
-            provideResponse(err, body, {}, done, function () {
-                const error = new Error(util.format(
-                    'The API could not provide details for a %s with the id %s',
-                    type, id));
-                done(error, null);
-            });
-        });
-    } else {
-        done(new Error('Type ' + type + ' is invalid.'), null);
+    if (validTypes.indexOf(type) < 0) {
+        done(new Error(`Type ${type} is invalid.`), null);
+        return;
     }
 
+    const path = urljoin(this.url, 'details', 'anonymous', type, id);
+
+    async.waterfall([
+        (cb) => request.get(path, cb),
+        (res, body, cb) => provideResponse(body, options, cb, function () {
+            const msg = `The API could not provide details for a ${type} with the id ${id}`;
+            done(new Error(msg), null);
+        })
+    ], done);
 };
 
 Client.prototype.menu = function (options, done) {
     'use strict';
     const path = urljoin(this.url, 'menu');
-    request.get(path, function (err, response, body) {
-        provideResponse(err, body, {}, done);
-    });
+    async.waterfall([
+        (cb) => request.get(path, cb),
+        (res, body, cb) => provideResponse(body, options, cb)
+    ], done);
 };
 
 Client.prototype.searchDetails = function (type, query, options, done) {
     'use strict';
-    this.search(type, query, options, (err, results) => {
-        if (err) {
-            done(err);
-            return;
-        }
-
-        const res = [];
-        async.each(results, (result, callback) => {
-            this.details(result.type, result.id, options, function (err, det) {
-                res.push(det);
-                callback(err);
-            });
-        }, function (err) {
-            done(err, res);
-        });
-    });
+    async.waterfall([
+        (cb) => this.search(type, query, options, cb),
+        (results, cb) =>
+            async.map(results, (res, cb) => this.details(res.type, res.id, options, cb), cb)
+    ], done);
 };
 
-function provideResponse(err, body, options, done, onMissingBody) {
+function provideResponse(body, options, done, onMissingBody) {
     'use strict';
-    if (err) {
-        done(err);
-        return;
-    }
 
     if (onMissingBody && !body) {
-        onMissingBody();
-    } else {
-        try {
-            done(null, applyOptions(JSON.parse(body), options));
-        } catch (error) {
-            done(error, null);
-        }
+        return onMissingBody();
+    }
+
+    try {
+        done(null, applyOptions(JSON.parse(body), options));
+    } catch (error) {
+        done(error, null);
     }
 }
 
