@@ -41,17 +41,17 @@ client.searchDetails('person', 'Smith', {maxResults: 1}, function (err, result) 
 #### `details(type, id, options, callback)` ####
 - `type {string}` - room/person/event/lecture
 - `id {number}` - id of the ressource
-- `options {number}` - None
+- `options {object}` - None
 - `callback {function}` - Called with the details (error first)
 
 #### `menu(options, callback)` ####
-- `options {number}` - None
+- `options {object}` - None
 - `callback {function}` - Called with the menu (error first)
 
 #### `searchDetails(type, query, options, callback)` ####
 - `type {string}` - all/room/person/event/lecture
-- `query {number}` - Your search query
-- `options {number}` - maxResults
+- `query {string}` - Your search query
+- `options {object}` - maxResults
 - `callback {function}` - Called with the details of all search results (error first)
 
 The client currently does not support authentication. That means that you won't find any students when searching persons.
