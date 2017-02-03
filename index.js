@@ -1,71 +1,74 @@
 const request = require('request');
 const urljoin = require('url-join');
 const async   = require('async');
-const util = require('util');
+const util    = require('util');
 
-const Client = function (url) {
-    'use strict';
-    this.url = url ? url : 'https://hdmapp.mi.hdm-stuttgart.de';
-};
+class Client {
 
-Client.prototype.search = function (type, query, options, done) {
-    'use strict';
-    const paths = {
-        person:  urljoin(this.url, 'search', 'anonymous', 'persons'),
-        lecture: urljoin(this.url, 'search', 'anonymous', 'lectures'),
-        all:     urljoin(this.url, 'search', 'anonymous', 'all'),
-        room:    urljoin(this.url, 'search', 'anonymous', 'rooms'),
-        event:   urljoin(this.url, 'search', 'anonymous', 'events')
-    };
-
-    if (!paths.hasOwnProperty(type)) {
-        done(new Error(`Type ${type} is invalid.`), null);
-        return;
+    constructor(url) {
+        'use strict';
+        this.url = url ? url : 'https://hdmapp.mi.hdm-stuttgart.de';
     }
 
-    const q = encodeURIComponent(query);
-    async.waterfall([
-        (cb) => request.get(paths[type] + '?q=' + q, cb),
-        (res, body, cb) => provideResponse(body, options, cb)
-    ], done);
-};
+    search(type, query, options, done) {
+        'use strict';
+        const paths = {
+            person: urljoin(this.url, 'search', 'anonymous', 'persons'),
+            lecture: urljoin(this.url, 'search', 'anonymous', 'lectures'),
+            all: urljoin(this.url, 'search', 'anonymous', 'all'),
+            room: urljoin(this.url, 'search', 'anonymous', 'rooms'),
+            event: urljoin(this.url, 'search', 'anonymous', 'events')
+        };
 
-Client.prototype.details = function (type, id, options, done) {
-    'use strict';
-    const validTypes = ['person', 'lecture', 'event', 'room'];
-    if (validTypes.indexOf(type) < 0) {
-        done(new Error(`Type ${type} is invalid.`), null);
-        return;
+        if (!paths.hasOwnProperty(type)) {
+            done(new Error(`Type ${type} is invalid.`), null);
+            return;
+        }
+
+        const q = encodeURIComponent(query);
+        async.waterfall([
+            (cb) => request.get(paths[type] + '?q=' + q, cb),
+            (res, body, cb) => provideResponse(body, options, cb)
+        ], done);
     }
 
-    const path = urljoin(this.url, 'details', 'anonymous', type, id);
+    details(type, id, options, done) {
+        'use strict';
+        const validTypes = ['person', 'lecture', 'event', 'room'];
+        if (validTypes.indexOf(type) < 0) {
+            done(new Error(`Type ${type} is invalid.`), null);
+            return;
+        }
 
-    async.waterfall([
-        (cb) => request.get(path, cb),
-        (res, body, cb) => provideResponse(body, options, cb, function () {
-            const msg = `The API could not provide details for a ${type} with the id ${id}`;
-            done(new Error(msg), null);
-        })
-    ], done);
-};
+        const path = urljoin(this.url, 'details', 'anonymous', type, id);
 
-Client.prototype.menu = function (options, done) {
-    'use strict';
-    const path = urljoin(this.url, 'menu');
-    async.waterfall([
-        (cb) => request.get(path, cb),
-        (res, body, cb) => provideResponse(body, options, cb)
-    ], done);
-};
+        async.waterfall([
+            (cb) => request.get(path, cb),
+            (res, body, cb) => provideResponse(body, options, cb, () => {
+                const msg = `The API could not provide details for a ${type} with the id ${id}`;
+                done(new Error(msg), null);
+            })
+        ], done);
+    }
 
-Client.prototype.searchDetails = function (type, query, options, done) {
-    'use strict';
-    async.waterfall([
-        (cb) => this.search(type, query, options, cb),
-        (results, cb) =>
-            async.map(results, (res, cb) => this.details(res.type, res.id, options, cb), cb)
-    ], done);
-};
+    menu(options, done) {
+        'use strict';
+        const path = urljoin(this.url, 'menu');
+        async.waterfall([
+            (cb) => request.get(path, cb),
+            (res, body, cb) => provideResponse(body, options, cb)
+        ], done);
+    }
+
+    searchDetails(type, query, options, done) {
+        'use strict';
+        async.waterfall([
+            (cb) => this.search(type, query, options, cb),
+            (results, cb) =>
+                async.map(results, (res, cb) => this.details(res.type, res.id, options, cb), cb)
+        ], done);
+    }
+}
 
 function provideResponse(body, options, done, onMissingBody) {
     'use strict';
@@ -83,7 +86,6 @@ function provideResponse(body, options, done, onMissingBody) {
 
 function applyOptions(body, options) {
     'use strict';
-
     return Array.isArray(body) && options.maxResults ? body.slice(0, options.maxResults) : body;
 }
 

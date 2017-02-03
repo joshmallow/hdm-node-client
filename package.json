@@ -8,7 +8,8 @@
     "xunit-test": "mocha --recursive -R xunit test/ > test-reports.xml",
     "preversion": "npm test",
     "lint": "jshint test index.js",
-    "jscs": "jscs test index.js"
+    "jscs": "jscs test index.js",
+    "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec test/"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "istanbul": "^0.4.5",
     "jscs": "^3.0.7",
     "jshint": "^2.9.4",
     "mocha": "^3.1.2",
