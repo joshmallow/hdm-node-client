@@ -1,3 +1,5 @@
+'use strict';
+
 const request = require('request');
 const urljoin = require('url-join');
 const async   = require('async');
@@ -6,12 +8,10 @@ const util    = require('util');
 class Client {
 
     constructor(url) {
-        'use strict';
         this.url = url ? url : 'https://hdmapp.mi.hdm-stuttgart.de';
     }
 
     search(type, query, options, done) {
-        'use strict';
         const paths = {
             person: urljoin(this.url, 'search', 'anonymous', 'persons'),
             lecture: urljoin(this.url, 'search', 'anonymous', 'lectures'),
@@ -33,7 +33,6 @@ class Client {
     }
 
     details(type, id, options, done) {
-        'use strict';
         const validTypes = ['person', 'lecture', 'event', 'room'];
         if (validTypes.indexOf(type) < 0) {
             done(new Error(`Type ${type} is invalid.`), null);
@@ -52,7 +51,6 @@ class Client {
     }
 
     menu(options, done) {
-        'use strict';
         const path = urljoin(this.url, 'menu');
         async.waterfall([
             (cb) => request.get(path, cb),
@@ -61,7 +59,6 @@ class Client {
     }
 
     searchDetails(type, query, options, done) {
-        'use strict';
         async.waterfall([
             (cb) => this.search(type, query, options, cb),
             (results, cb) =>
@@ -71,8 +68,6 @@ class Client {
 }
 
 function provideResponse(body, options, done, onMissingBody) {
-    'use strict';
-
     if (onMissingBody && !body) {
         return onMissingBody();
     }
@@ -85,7 +80,6 @@ function provideResponse(body, options, done, onMissingBody) {
 }
 
 function applyOptions(body, options) {
-    'use strict';
     return Array.isArray(body) && options.maxResults ? body.slice(0, options.maxResults) : body;
 }
 
