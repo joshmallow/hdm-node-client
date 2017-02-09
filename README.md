@@ -65,6 +65,9 @@ The client currently does not support authentication. That means that you won't 
 #### `maxResults {number}` ####
 Restricts the number of results that are presented to you. Used for `search` this does not improve performance, for `searchDetails` it does.
 
+#### `host {string}` ####
+Uses a custom API host.
+
 ### Running Tests ###
 
 There are three scripts you can use to run tests and analyse the code:
