@@ -14,16 +14,24 @@ describe('menu', function () {
         expect(client.menu).to.be.a('function');
     });
 
-    it('make api call', function (done) {
-        const scope = nockSuccessfulRequest({ test: 'body' });
+    it('should make api call', function (done) {
+        const scope = nockSuccessfulRequest({ test: 'body' }, client.options.host);
         client.menu({}, function () {
             scope.done();
             done();
         });
     });
 
+    it('should use locally specified host', function (done) {
+        const scope = nockSuccessfulRequest({ test: 'body' }, 'https://test.url');
+        client.menu({ host: 'https://test.url' }, function () {
+            scope.done();
+            done();
+        });
+    });
+
     it('should provide body of api response as an object', function (done) {
-        nockSuccessfulRequest({ test: 'body' });
+        nockSuccessfulRequest({ test: 'body' }, client.options.host);
         client.menu({}, function (err, body) {
             expect(body).to.be.an('object');
             expect(body).to.eql({ test: 'body' });
@@ -43,7 +51,7 @@ describe('menu', function () {
     });
 
     it('should provide error if parsing body fails', function (done) {
-        nockSuccessfulRequest('No JSON');
+        nockSuccessfulRequest('No JSON', client.options.host);
         client.menu({}, function (err, res) {
             expect(err.name).to.equal('SyntaxError');
             expect(res).to.equal(null);
@@ -52,9 +60,9 @@ describe('menu', function () {
     });
 });
 
-function nockSuccessfulRequest(result) {
+function nockSuccessfulRequest(result, host) {
     'use strict';
-    return nock(client.url)
+    return nock(host)
         .get('/menu')
         .reply(200, result);
 }

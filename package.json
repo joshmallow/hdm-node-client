@@ -20,6 +20,7 @@
   "homepage": "https://bitbucket.org/jscheffner/hdm-node-client#readme",
   "dependencies": {
     "async": "^2.1.2",
+    "lodash": "^4.17.4",
     "request": "^2.77.0",
     "url-join": "^1.1.0"
   },

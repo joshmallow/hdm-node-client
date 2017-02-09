@@ -3,8 +3,8 @@ const expect = require('chai').expect;
 const nock = require('nock');
 const utils = require('./utils');
 
-const PERSON_SEARCH_PATH = '/search/anonymous/persons';
-const PERSON_DETAILS_PATH = '/details/anonymous/person/';
+const personSearchPath = '/search/anonymous/persons';
+const personDetailsPath = '/details/anonymous/person/';
 const client = new Client();
 
 const searchResults = [
@@ -61,8 +61,8 @@ describe('searchDetails', function () {
     });
 
     it('should call done with error if search request causes one', function (done) {
-        nock(client.url)
-            .get(PERSON_SEARCH_PATH)
+        nock(client.options.host)
+            .get(personSearchPath)
             .query({ q: 'thomas' })
             .replyWithError('Test Error');
 
@@ -75,8 +75,8 @@ describe('searchDetails', function () {
     it('should call done with error if #details throws one', function (done) {
         nockSuccessfulSearch('thomas', searchResults.slice(0, 1));
 
-        nock(client.url)
-            .get(PERSON_DETAILS_PATH + searchResults[0].id)
+        nock(client.options.host)
+            .get(personDetailsPath + searchResults[0].id)
             .replyWithError('Test Error');
 
         client.searchDetails('person', 'thomas', {}, function (err) {
@@ -110,10 +110,10 @@ describe('searchDetails', function () {
 
 function nockSuccessfulSearch(query, results) {
     'use strict';
-    return utils.nockSuccessfulSearch(nock, client.url, PERSON_SEARCH_PATH, query, results);
+    return utils.nockSuccessfulSearch(nock, client.options.host, personSearchPath, query, results);
 }
 
 function nockSuccessfulDetails(id, details) {
     'use strict';
-    return utils.nockSuccessfulDetails(nock, client.url, PERSON_DETAILS_PATH + id, details);
+    return utils.nockSuccessfulDetails(nock, client.options.host, personDetailsPath + id, details);
 }

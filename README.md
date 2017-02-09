@@ -17,9 +17,9 @@ const Client = require('hdm-client');
 const client = new Client();
 ```
 
-This will use the default api url. If you want to use a different one, you can do that:
+This will use the default api url. If you want to use a different one, you can set the global host option like that:
 ```
-const client = new Client('https://myApi/v0/');
+const client = new Client({ host: 'https://myApi/v0/' });
 ```
 
 Now you can use the client to access the api. Let's see where Mr Smith has his office:
@@ -32,14 +32,18 @@ client.searchDetails('person', 'Smith', {maxResults: 1}, function (err, result) 
 
 ## API ##
 
+#### `constructor(options = { host: 'https://hdmapp.mi.hdm-stuttgart.de' })` ####
+- `options {object}` - host, maxResults
+If options is a string, the host option will be set to this value. This is deprecated and will be removed in the next major release. Don't do it.
+
 #### `search(type, query, options, callback)` ####
-- `type {string}` - all/room/person/event/lecture
+- `type {string}` - all | room | person | event |lecture
 - `query {string}` - Your search query
 - `options {object}` - maxResults
 - `callback {function}` - Called with the search result (error first)  
 
 #### `details(type, id, options, callback)` ####
-- `type {string}` - room/person/event/lecture
+- `type {string}` - room | person | event | lecture
 - `id {number}` - id of the ressource
 - `options {object}` - None
 - `callback {function}` - Called with the details (error first)
@@ -49,7 +53,7 @@ client.searchDetails('person', 'Smith', {maxResults: 1}, function (err, result) 
 - `callback {function}` - Called with the menu (error first)
 
 #### `searchDetails(type, query, options, callback)` ####
-- `type {string}` - all/room/person/event/lecture
+- `type {string}` - all | room | person | event| lecture
 - `query {string}` - Your search query
 - `options {object}` - maxResults
 - `callback {function}` - Called with the details of all search results (error first)

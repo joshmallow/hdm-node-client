@@ -4,20 +4,32 @@ const request = require('request');
 const urljoin = require('url-join');
 const async   = require('async');
 const util    = require('util');
+const _       = require('lodash');
+
+const defaultHost = 'https://hdmapp.mi.hdm-stuttgart.de';
 
 class Client {
 
-    constructor(url) {
-        this.url = url ? url : 'https://hdmapp.mi.hdm-stuttgart.de';
+    constructor(options = { host:  defaultHost }) {
+
+        if (_.isString(options)) {    // for backwards compatibility
+            this.options = { host: options };
+        } else {
+            this.options = options;
+            this.options.host = this.options.host || defaultHost;
+        }
+
+        this.url = this.options.host; // for backwards compatibility
     }
 
     search(type, query, options, done) {
+        options = Object.assign({}, this.options, options);
         const paths = {
-            person: urljoin(this.url, 'search', 'anonymous', 'persons'),
-            lecture: urljoin(this.url, 'search', 'anonymous', 'lectures'),
-            all: urljoin(this.url, 'search', 'anonymous', 'all'),
-            room: urljoin(this.url, 'search', 'anonymous', 'rooms'),
-            event: urljoin(this.url, 'search', 'anonymous', 'events')
+            person:  urljoin(options.host, 'search', 'anonymous', 'persons'),
+            lecture: urljoin(options.host, 'search', 'anonymous', 'lectures'),
+            all:     urljoin(options.host, 'search', 'anonymous', 'all'),
+            room:    urljoin(options.host, 'search', 'anonymous', 'rooms'),
+            event:   urljoin(options.host, 'search', 'anonymous', 'events')
         };
 
         if (!paths.hasOwnProperty(type)) {
@@ -28,22 +40,23 @@ class Client {
         const q = encodeURIComponent(query);
         async.waterfall([
             (cb) => request.get(paths[type] + '?q=' + q, cb),
-            (res, body, cb) => provideResponse(body, options, cb)
+            (res, body, cb) => provideResponse(body, options, this.options, cb)
         ], done);
     }
 
     details(type, id, options, done) {
+        options = Object.assign({}, this.options, options);
         const validTypes = ['person', 'lecture', 'event', 'room'];
-        if (validTypes.indexOf(type) < 0) {
+        if (!_.includes(validTypes, type)) {
             done(new Error(`Type ${type} is invalid.`), null);
             return;
         }
 
-        const path = urljoin(this.url, 'details', 'anonymous', type, id);
+        const path = urljoin(options.host, 'details', 'anonymous', type, id);
 
         async.waterfall([
             (cb) => request.get(path, cb),
-            (res, body, cb) => provideResponse(body, options, cb, () => {
+            (res, body, cb) => provideResponse(body, options, this.options, cb, () => {
                 const msg = `The API could not provide details for a ${type} with the id ${id}`;
                 done(new Error(msg), null);
             })
@@ -51,10 +64,11 @@ class Client {
     }
 
     menu(options, done) {
-        const path = urljoin(this.url, 'menu');
+        options = Object.assign({}, this.options, options);
+        const path = urljoin(options.host, 'menu');
         async.waterfall([
             (cb) => request.get(path, cb),
-            (res, body, cb) => provideResponse(body, options, cb)
+            (res, body, cb) => provideResponse(body, options, this.options, cb)
         ], done);
     }
 
@@ -67,19 +81,20 @@ class Client {
     }
 }
 
-function provideResponse(body, options, done, onMissingBody) {
+function provideResponse(body, localOptions, globalOptions, done, onMissingBody) {
     if (onMissingBody && !body) {
         return onMissingBody();
     }
 
     try {
-        done(null, applyOptions(JSON.parse(body), options));
+        done(null, applyOptions(JSON.parse(body), localOptions, globalOptions));
     } catch (error) {
         done(error, null);
     }
 }
 
-function applyOptions(body, options) {
+function applyOptions(body, localOptions, globalOptions) {
+    const options = Object.assign({}, globalOptions, localOptions);
     return Array.isArray(body) && options.maxResults ? body.slice(0, options.maxResults) : body;
 }
 
