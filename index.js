@@ -6,17 +6,19 @@ const async   = require('async');
 const util    = require('util');
 const _       = require('lodash');
 
-const defaultHost = 'https://hdmapp.mi.hdm-stuttgart.de';
-
 class Client {
 
-    constructor(options = { host:  defaultHost }) {
+    constructor(options) {
+
+        const defaultHost = 'https://hdmapp.mi.hdm-stuttgart.de';
 
         if (_.isString(options)) {    // for backwards compatibility
             this.options = { host: options };
-        } else {
+        } else if (options) {
             this.options = options;
             this.options.host = this.options.host || defaultHost;
+        } else {
+            this.options = { host:  defaultHost };
         }
 
         this.url = this.options.host; // for backwards compatibility

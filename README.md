@@ -34,6 +34,7 @@ client.searchDetails('person', 'Smith', {maxResults: 1}, function (err, result) 
 
 #### `constructor(options = { host: 'https://hdmapp.mi.hdm-stuttgart.de' })` ####
 - `options {object}` - host, maxResults
+
 If options is a string, the host option will be set to this value. This is deprecated and will be removed in the next major release. Don't do it.
 
 #### `search(type, query, options, callback)` ####
