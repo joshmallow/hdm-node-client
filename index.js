@@ -26,12 +26,13 @@ class Client {
 
     search(type, query, options, done) {
         options = Object.assign({}, this.options, options);
+        const searchPath = options.auth ? 'search' : 'search/anonymous';
         const paths = {
-            person:  urljoin(options.host, 'search', 'anonymous', 'persons'),
-            lecture: urljoin(options.host, 'search', 'anonymous', 'lectures'),
-            all:     urljoin(options.host, 'search', 'anonymous', 'all'),
-            room:    urljoin(options.host, 'search', 'anonymous', 'rooms'),
-            event:   urljoin(options.host, 'search', 'anonymous', 'events')
+            person:  urljoin(options.host, searchPath, 'persons'),
+            lecture: urljoin(options.host, searchPath, 'lectures'),
+            all:     urljoin(options.host, searchPath, 'all'),
+            room:    urljoin(options.host, searchPath, 'rooms'),
+            event:   urljoin(options.host, searchPath, 'events')
         };
 
         if (!paths.hasOwnProperty(type)) {
@@ -39,9 +40,10 @@ class Client {
             return;
         }
 
+        const reqOptions = { auth: options.auth };
         const q = encodeURIComponent(query);
         async.waterfall([
-            (cb) => request.get(paths[type] + '?q=' + q, cb),
+            (cb) => request.get(paths[type] + '?q=' + q, reqOptions, cb),
             (res, body, cb) => provideResponse(body, options, this.options, cb)
         ], done);
     }
@@ -54,7 +56,7 @@ class Client {
             return;
         }
 
-        const path = urljoin(options.host, 'details', 'anonymous', type, id);
+        const path = urljoin(options.host, 'details', type, id);
 
         async.waterfall([
             (cb) => request.get(path, cb),

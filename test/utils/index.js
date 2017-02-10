@@ -1,11 +1,14 @@
-exports.nockSuccessfulSearch = function (nock, apiRoot, path, query, result) {
+exports.nockSuccessfulSearch = function (nock, apiRoot, path, query, result, auth) {
     'use strict';
     query = query === 'boolean' ? query : { q: query };
 
-    return nock(apiRoot)
-        .get(path)
-        .query(query)
-        .reply(200, result);
+    let scope = nock(apiRoot).get(path).query(query);
+    if (auth) {
+        scope = scope.basicAuth(auth);
+    }
+
+    scope = scope.reply(200, result);
+    return scope;
 };
 
 exports.nockSuccessfulDetails = function (nock, apiRoot, path, result) {

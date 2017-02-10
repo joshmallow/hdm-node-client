@@ -68,11 +68,15 @@ Restricts the number of results that are presented to you. Used for `search` thi
 #### `host {string}` ####
 Uses a custom API host.
 
+#### `auth {object}` ####
+Uses Basic Authentication. The object should have the keys 'user' and 'pass' or 'username' and 'password'.
+
 ### Running Tests ###
 
 There are three scripts you can use to run tests and analyse the code:
 
 - `npm test`: Runs all the unit tests
+- `npm run coverage`: Provides information about the test coverage
 - `npm run lint`: Runs JSHint (Rules can be found in `.jshintrc`)
 - `npm run jscs`: Runs JSCS (Rules can be found in `.jscsrc`)
 

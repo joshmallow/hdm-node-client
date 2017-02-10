@@ -4,7 +4,7 @@ const nock = require('nock');
 const utils = require('./utils');
 
 const personSearchPath = '/search/anonymous/persons';
-const personDetailsPath = '/details/anonymous/person/';
+const personDetailsPath = '/details/person/';
 const client = new Client();
 
 const searchResults = [

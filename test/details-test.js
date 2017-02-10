@@ -5,7 +5,7 @@ const utils = require('./utils');
 const urljoin = require('url-join');
 
 const client = new Client();
-const personDetailsPath = '/details/anonymous/';
+const personDetailsPath = '/details/';
 const defaultHost = 'https://hdmapp.mi.hdm-stuttgart.de';
 
 describe('details', function () {
@@ -20,33 +20,33 @@ describe('details', function () {
     });
 
     it('should make request to get details of person with id 6368845', function (done) {
-        const path = '/details/anonymous/person/6368845';
+        const path = '/details/person/6368845';
         spyDetailsRequest('person', '6368845', defaultHost, path, {}, done);
     });
 
     it('should make request to get details of person with id 111111', function (done) {
-        const path = '/details/anonymous/person/111111';
+        const path = '/details/person/111111';
         spyDetailsRequest('person', '111111', defaultHost, path, {}, done);
     });
 
     it('should make request to get details of lecture with id 111111', function (done) {
-        const path = '/details/anonymous/lecture/111111';
+        const path = '/details/lecture/111111';
         spyDetailsRequest('lecture', '111111', defaultHost, path, {}, done);
     });
 
     it('should make request to get details of event with id 111111', function (done) {
-        const path = '/details/anonymous/event/111111';
+        const path = '/details/event/111111';
         spyDetailsRequest('event', '111111', defaultHost, path, {}, done);
     });
 
     it('should make request to get details of event with id 123456', function (done) {
-        const path = '/details/anonymous/room/123456';
+        const path = '/details/room/123456';
         spyDetailsRequest('room', '123456', defaultHost, path, {}, done);
     });
 
     it('should use locally specified host', function (done) {
         const host = 'https://some.url';
-        const path = '/details/anonymous/room/123456';
+        const path = '/details/room/123456';
         spyDetailsRequest('room', '123456', host, path, { host: host }, done);
     });
 
@@ -73,7 +73,7 @@ describe('details', function () {
 
     it('should provide the error if api responds with one', function (done) {
         nock('https://hdmapp.mi.hdm-stuttgart.de')
-            .get('/details/anonymous/person/123')
+            .get('/details/person/123')
             .replyWithError('Test Error');
 
         client.details('person', '123', {}, function (err) {
