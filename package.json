@@ -5,19 +5,18 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "xunit-test": "mocha --recursive -R xunit test/ > test-reports.xml",
-    "preversion": "npm test",
     "lint": "jshint test index.js",
     "jscs": "jscs test index.js",
-    "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec test/"
+    "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec test/",
+    "preversion": "npm test"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/jscheffner/hdm-node-client.git"
+    "url": "git+ssh://git@github.com:joshmallow/hdm-node-client.git"
   },
   "author": "Jonas Scheffner",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/jscheffner/hdm-node-client#readme",
+  "homepage": "https://github.com/joshmallow/hdm-node-client/",
   "dependencies": {
     "async": "^2.1.2",
     "lodash": "^4.17.4",
