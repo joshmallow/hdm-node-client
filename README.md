@@ -1,5 +1,4 @@
-[![Build Status](http://ec2-35-156-28-255.eu-central-1.compute.amazonaws.com/jenkins/buildStatus/icon?job=chatbot/client-tests)](http://ec2-35-156-28-255.eu-central-1.compute.amazonaws.com/jenkins/job/chatbot/job/client-tests/)
-
+[![Build Status](https://travis-ci.org/joshmallow/hdm-node-client.svg?branch=master)](https://travis-ci.org/joshmallow/hdm-node-client)
 # HdM Client #
 
 This is an unofficial client for the Stuttgart Media University API.
