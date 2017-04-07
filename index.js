@@ -9,19 +9,10 @@ const _       = require('lodash');
 class Client {
 
     constructor(options) {
+        this.options = completeOptions(options);
 
-        const defaultHost = 'https://hdmapp.mi.hdm-stuttgart.de';
-
-        if (_.isString(options)) {    // for backwards compatibility
-            this.options = { host: options };
-        } else if (options) {
-            this.options = options;
-            this.options.host = this.options.host || defaultHost;
-        } else {
-            this.options = { host:  defaultHost };
-        }
-
-        this.url = this.options.host; // for backwards compatibility
+        // for backwards compatibility
+        this.url = this.options.host;
     }
 
     search(type, query, options, done) {
@@ -99,7 +90,21 @@ function provideResponse(body, localOptions, globalOptions, done, onMissingBody)
 
 function applyOptions(body, localOptions, globalOptions) {
     const options = Object.assign({}, globalOptions, localOptions);
-    return Array.isArray(body) && options.maxResults ? body.slice(0, options.maxResults) : body;
+    return _.isArray(body) && options.maxResults ? body.slice(0, options.maxResults) : body;
+}
+
+function completeOptions(options) {
+    const defaultOptions = { host: 'https://hdmapp.mi.hdm-stuttgart.de' };
+    let completedOptions;
+
+    if (_.isString(options)) {
+        // for backwards compatibility
+        completedOptions = { host: options };
+    } else {
+        completedOptions = Object.assign({}, defaultOptions, options);
+    }
+
+    return completedOptions;
 }
 
 module.exports = Client;

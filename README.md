@@ -2,7 +2,7 @@
 
 # HdM Client #
 
-This is a client for the Stuttgart Media University API.
+This is an unofficial client for the Stuttgart Media University API.
 
 ## Getting Started ##
 
