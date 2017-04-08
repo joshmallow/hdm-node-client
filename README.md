@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/joshmallow/hdm-node-client.svg?branch=master)](https://travis-ci.org/joshmallow/hdm-node-client)
+[![Build Status](https://travis-ci.org/joshmallow/hdm-node-client.svg?branch=master)](https://travis-ci.org/joshmallow/hdm-node-client) [![Coverage Status](https://coveralls.io/repos/github/joshmallow/hdm-node-client/badge.svg?branch=master)](https://coveralls.io/github/joshmallow/hdm-node-client?branch=master)
 # HdM Client #
 
 This is an unofficial client for the Stuttgart Media University API.
