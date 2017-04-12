@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jscheffner/hdm-node-client.svg?branch=master)](https://travis-ci.org/jscheffner/hdm-node-client) [![Coverage Status](https://coveralls.io/repos/github/joshmallow/hdm-node-client/badge.svg?branch=master)](https://coveralls.io/github/joshmallow/hdm-node-client?branch=master)
+[![Build Status](https://travis-ci.org/jscheffner/hdm-node-client.svg?branch=master)](https://travis-ci.org/jscheffner/hdm-node-client) [![Coverage Status](https://coveralls.io/repos/github/joshmallow/hdm-node-client/badge.svg?branch=master)](https://coveralls.io/github/joshmallow/hdm-node-client?branch=master) [![node](https://img.shields.io/node/v/hdm-client.svg)]() [![license](https://img.shields.io/npm/l/hdm-client.svg)](https://github.com/jscheffner/hdm-node-client#isc-licence)
 # HdM Client #
 
 This is an unofficial client for the Stuttgart Media University API.
