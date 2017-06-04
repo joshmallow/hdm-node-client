@@ -16,35 +16,35 @@ class Client {
     }
 
     search(type, query, options, done) {
-        options = Object.assign({}, this.options, options);
-        const searchPath = options.auth ? 'search' : 'search/anonymous';
-        const paths = {
-            person:  urljoin(options.host, searchPath, 'persons'),
-            lecture: urljoin(options.host, searchPath, 'lectures'),
-            all:     urljoin(options.host, searchPath, 'all'),
-            room:    urljoin(options.host, searchPath, 'rooms'),
-            event:   urljoin(options.host, searchPath, 'events')
+        const opt = _.assign({}, this.options, options);
+        const searchPath = opt.auth ? 'search' : 'search/anonymous';
+        const endpoints = {
+            person:  'persons',
+            lecture: 'lectures',
+            all:     'all',
+            room:    'rooms',
+            event:   'events'
         };
 
+        const paths = _.mapValues(endpoints, (endpoint) => urljoin(opt.host, searchPath, endpoint));
+
         if (!paths.hasOwnProperty(type)) {
-            done(new Error(`Type ${type} is invalid.`), null);
-            return;
+            return done(new Error(`Type ${type} is invalid.`), null);
         }
 
-        const reqOptions = { auth: options.auth };
+        const reqOptions = { auth: opt.auth };
         const q = encodeURIComponent(query);
         async.waterfall([
             (cb) => request.get(paths[type] + '?q=' + q, reqOptions, cb),
-            (res, body, cb) => provideResponse(body, options, this.options, cb)
+            (res, body, cb) => provideResponse(body, opt, this.options, cb)
         ], done);
     }
 
     details(type, id, options, done) {
-        options = Object.assign({}, this.options, options);
+        options = _.assign({}, this.options, options);
         const validTypes = ['person', 'lecture', 'event', 'room'];
         if (!_.includes(validTypes, type)) {
-            done(new Error(`Type ${type} is invalid.`), null);
-            return;
+            return done(new Error(`Type ${type} is invalid.`), null);
         }
 
         const path = urljoin(options.host, 'details', type, id);
@@ -59,7 +59,7 @@ class Client {
     }
 
     menu(options, done) {
-        options = Object.assign({}, this.options, options);
+        options = _.assign({}, this.options, options);
         const path = urljoin(options.host, 'menu');
         async.waterfall([
             (cb) => request.get(path, cb),
@@ -89,22 +89,15 @@ function provideResponse(body, localOptions, globalOptions, done, onMissingBody)
 }
 
 function applyOptions(body, localOptions, globalOptions) {
-    const options = Object.assign({}, globalOptions, localOptions);
+    const options = _.assign({}, globalOptions, localOptions);
     return _.isArray(body) && options.maxResults ? body.slice(0, options.maxResults) : body;
 }
 
 function completeOptions(options) {
     const defaultOptions = { host: 'https://hdmapp.mi.hdm-stuttgart.de' };
-    let completedOptions;
 
-    if (_.isString(options)) {
-        // for backwards compatibility
-        completedOptions = { host: options };
-    } else {
-        completedOptions = Object.assign({}, defaultOptions, options);
-    }
-
-    return completedOptions;
+    // conditional ensures backwards compatibility
+    return _.isString(options) ? { host: options } : _.assign({}, defaultOptions, options);
 }
 
 module.exports = Client;
