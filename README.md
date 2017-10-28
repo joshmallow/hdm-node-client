@@ -3,6 +3,10 @@
 
 This is an unofficial client for the Stuttgart Media University API.
 
+## Notice 
+
+**The module should still work but the underlying API might provide out of date data.**
+
 ## Getting Started ##
 
 First, you have to install the client:
